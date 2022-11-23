@@ -1,0 +1,167 @@
+ssh connection_server_ip{10.117.3.2} -lusername{cloudgradproj} -D{selected_port}7777
+wait
+password{coolgradteam}
+
+ssh sas_ip{192.168.4.11} extra_flags_for_compatability{-c 3des-cbc} -lusername{admin}
+wait
+password{admin}
+
+
+# create zonegroup (empty):
+zonegroup create {new zg name}
+
+# delete zonegroup
+zonegroup delete single {zg name}
+
+# delete all zonegroups
+zonegroup delete all noconfirm
+
+
+
+----------------
+
+# connecting to server manager:
+from connection_server (GPU0):
+- ssh admin@192.168.4.10 
+- admin
+
+"
+(1) Management Agent
+(2) Emergency Management Port
+(3) Console Redirection
+(4) TFTP update
+(5) Logout
+(6) Change Management Role To Slave
+(7) System Information Dump
+(8) Command Line Interface
+(9) Account Management
+Enter selection: 
+"
+
+- 8
+
+(1) SMASH CLI Shell
+Enter selection or type (0) to quit: 
+
+- 1
+
+Fujitsu (TM) Management Blade
+
+Version 6.00
+
+Copyright 2021 Fujitsu, Inc. All rights reserved.
+
+</OEMSVS> BX900S2 -> 
+
+- help 
+
+</OEMSVS> BX900S2 -> help
+status = 0
+status_tag = COMMAND COMPLETED
+
+cd      - Navigate the object namespace.
+exit    - Terminate a session to the CLI.
+help    - Display help information about commands.
+load    - Transfer a file from a server to a target.
+reset   - Reset a target.
+set     - Set target properties to the specified value.
+show    - Display information about targets and properties.
+start   - Turn on the target.
+stop    - Shutdown the target.
+version - Display the version of Management Blade firmware.
+
+</OEMSVS> BX900S2 -> 
+
+# targets:
+
+</OEMSVS> BX900S2 -> show
+status = 0
+status_tag = COMMAND COMPLETED
+
+/OEMSVS
+    Targets
+      AgentInfo
+      MgmtBlade1
+      MgmtBlade2
+      SystemInfo
+      Log
+      User
+      Default
+      PowerConsumption
+      TftpUpdate
+      TrapInfo
+      ConsoleRedirection
+      ServerBlade1
+      ServerBlade2
+      ServerBlade3
+      ServerBlade4
+      ServerBlade5
+      ServerBlade6
+      ServerBlade7
+      ServerBlade8
+      ServerBlade9
+      ServerBlade10
+      ServerBlade11
+      ServerBlade12
+      ServerBlade13
+      ServerBlade14
+      ServerBlade15
+      ServerBlade16
+      ServerBlade17
+      ServerBlade18
+      StorageBlade1
+      StorageBlade2
+      StorageBlade3
+      StorageBlade5
+      StorageBlade7
+      StorageBlade9
+      StorageBlade10
+      StorageBlade11
+      StorageBlade13
+      StorageBlade15
+      StorageBlade17
+      StorageBlade18
+      ConnectionBlade1
+      ConnectionBlade2
+      ConnectionBlade3
+      ConnectionBlade4
+      ConnectionBlade5
+      ConnectionBlade6
+      ConnectionBlade7
+      ConnectionBlade8
+      PowerManagement
+      Support
+    Verbs
+      cd exit help set show version
+
+</OEMSVS> BX900S2 -> 
+
+# not all of them are actually there, some are just empty slots.
+# to poweron a server use:
+start ServerBlade#
+
+# to poweroff a server use:
+stop ServerBlade#
+
+
+
+----
+
+# notes
+1. ssh on sas is so slow, wait between commands
+2. needed input: slots of which servers, stroagedevices, and switches are (da 8er el ips)
+    ServerBlades slots in rack 4:
+        1, 2,  3,  4,  17,  5,  6
+        9, 10, 11, 12, 18, 13, 14
+    StorageBlades slots in rack 4:
+        7
+        15
+    switches:
+        1, 2
+    Sas switches:
+        5, 6
+
+
+using paramiko's exec_command in sas switch doesn't work as verified using:
+https://stackoverflow.com/questions/48789499/what-is-the-meaning-of-the-eoferror-after-i-execute-a-command-with-paramiko
+
