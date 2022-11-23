@@ -1,0 +1,8 @@
+{
+    "connection_server_ip": "10.117.3.2",
+    "connection_server_username": "cloudgradproj",
+    "connection_server_password": "coolgradteam",
+    "sas5_server_ip": "192.168.4.11",
+    "sas5_server_username": "admin",
+    "sas5_server_password": "admin"
+}
