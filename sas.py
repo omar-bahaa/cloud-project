@@ -1,49 +1,77 @@
 import paramiko
+import json
+
+class ConnectionServer():
+    def __init__(self) -> None:
+        super.__init__()
+        self.load_config()
+    
+    def load_config(self, json_filepath: str) -> None:
+        with open(json_filepath, "rb") as f:
+            conf = json.load(f)
+        self.CONNECTION_SERVER_IP=conf["connection_server_ip"]
+        self.CONNECTION_SERVER_USERNAME=conf["connection_server_username"]
+        self.CONNECTION_SERVER_PASSWORD=conf["connection_server_password"]
+    
+    def connect(self):
+        self.SSHClient = paramiko.SSHClient()
+        self.SSHClient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.SSHClient.connect(self.CONNECTION_SERVER_IP, username=self.CONNECTION_SERVER_USERNAME, password=self.CONNECTION_SERVER_PASSWORD)
+        
+    def get_SSHClient(self):
+        return self.SSHClient
+    
+    def close_connection(self):
+        self.SSHClient.close()
+    
+    def get_transport(self):
+        return self.SSHClient.get_transport()
+        
+    def make_channel(self, transport, dest_addr=("192.168.4.15", 22), src_addr=("127.0.0.1", 1234)):
+        return transport.open_channel("direct-tcpip", dest_addr=dest_addr, src_addr=src_addr)
+    
+
+class Connector():
+    def __init__(self) -> None:
+        pass        
 
 
-CONNECTION_SERVER_IP="10.117.3.2"
-CONNECTION_SERVER_USERNAME="cloudgradproj"
-CONNECTION_SERVER_PASSWORD="coolgradteam"
-# SSH_KNOWN_HOSTS_PATH="/home/omar/.ssh/known_hosts"
-SAS5_SERVER_IP="192.168.4.11"
-SAS6_SERVER_IP="192.168.4.15"
-SAS5_USERNAME=SAS6_USERNAME="admin"
-SAS5_PASSWORD=SAS6_PASSWORD="admin"
+class SASConigurator():
+    def __init__(self) -> None:
+        super.__init__()
+        self.load_config()
+    
+    def load_config(self, json_filepath: str) -> None:
+        with open(json_filepath, "rb") as f:
+            conf = json.load(f)
+        self.SAS5_SERVER_IP=conf["sas5_server_ip"]
+        self.SAS6_SERVER_IP=conf["sas6_server_ip"]
+        self.SAS5_USERNAME=conf["sas5_server_username"]
+        self.SAS6_USERNAME=conf["sas6_server_username"]
+        self.SAS5_PASSWORD=conf["sas5_server_password"]
+        self.SAS6_PASSWORD=conf["sas6_server_password"]
+    
+    def connect_withchannel(self, channel):
+        self.SSHClient = paramiko.SSHClient()
+        self.SSHClient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.SSHClient.connect(self.SAS5_SERVER_IP, username=self.SAS5_USERNAME, password=self.SAS5_PASSWORD, sock=channel)
+        
+    def invoke_shell(self):
+        self.shell = self.SSHClient.invoke_shell()
+        
+    def send_command(self, command: str, eof: str='SDMCLI> ') -> str:
+        buff = ''
+        while not buff.endswith(eof):
+            resp = self.shell.recv(1).decode()
+            buff += resp
+        return buff
+    
+    def close_connection(self):
+        self.SSHClient.close()
+    
+    def get_SSHClient(self):
+        return self.SSHClient
+    
+    def get_shell(self):
+        return self.shell
 
-# ssh to connection server
-ssh_connection_server = paramiko.SSHClient()
-ssh_connection_server.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh_connection_server.connect(CONNECTION_SERVER_IP, username=CONNECTION_SERVER_USERNAME, password=CONNECTION_SERVER_PASSWORD)
-
-# ssh to SAS5 server
-ssh_connection_server_transport = ssh_connection_server.get_transport()
-print("got transport")
-ssh_connection_server_channel = ssh_connection_server_transport.open_channel("direct-tcpip", dest_addr=(SAS6_SERVER_IP, 22), src_addr=("127.0.0.1", 1234))
-print("got channel")
-ssh_sas5_server = paramiko.SSHClient()
-ssh_sas5_server.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh_sas5_server.connect(SAS5_SERVER_IP, username=SAS5_USERNAME, password=SAS5_PASSWORD, sock=ssh_connection_server_channel)
-print("connected to sas")
-chan = ssh_sas5_server.invoke_shell()
-
-buff = ''
-while not buff.endswith('SDMCLI>'):
-    resp = chan.recv(9999).decode()
-    buff += resp
-print(buff)
-
-# chan.send('help\n')
-# buff = ''
-# while not buff.endswith('SDMCLI> '):
-#     resp = chan.recv(9999).decode()
-#     buff += resp
-# print(buff)
-
-
-# stdin, stdout, stderr = ssh_sas5_server.exec_command("show")
-
-# for line in stdout.readlines():
-    # print(line)
-
-ssh_sas5_server.close()
-ssh_connection_server.close()
