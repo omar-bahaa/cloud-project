@@ -16,6 +16,9 @@ del_zones = lambda zones: f"zoneset delete single {zones}\n"
 delall_zones = "zoneset delete all noconfirm\n"
 add_zones = lambda zones, zonegr1, zonegr2: f"zoneset add {zones} {zonegr1} {zonegr2}\n"
 rm_zones = lambda zones, zonegr1, zonegr2: f"zoneset remove {zones} {zonegr1} {zonegr2}\n"
+act_zones = lambda zones, passw: f"zoneset activate {zones}\n{passw}\n\n"
+deact_zones = lambda passw: f"zoneset deactivate\n{passw}\n\n"
+passwd = lambda zones, opass, npass: f"{opass}\n\n{npass}\n\n{npass}\n\n"
 
 
 """
@@ -35,3 +38,17 @@ Expanders are almost all aliased (SAS_ConnectionBlade_06 is an alias). Real name
 To activate a zoneset we need to deactivate any activated zoneset. Only 1 may be activated
 After entering a passwd for activation or deactivation, double enter is needed.
 """
+
+def config_zonegr_script(name: str, exp_phy: dict[str: str]) -> str:
+    output = ""
+    output += create_zonegr(name)
+    for expander, phy in exp_phy.items():
+        output += add_zonegr(name, expander, phy)
+    return output
+
+def config_zones_script(name: str, zonegr: dict[str: str]) -> str:
+    output = ""
+    output += create_zones(name)
+    for zonegroup1, zonegroup2 in zonegr.items():
+        output += add_zones(name, zonegroup1, zonegroup1)
+    return output
