@@ -160,8 +160,14 @@ stop ServerBlade#
         1, 2
     Sas switches:
         5, 6
-
+3. Each ServerBlade is connected to ConnectionBlade_06 using their ports: 6, 7
+4. ConnectionBlade ports:
+        00,01 04,05 , ... 
+        02.03 06,07 , ...
 
 using paramiko's exec_command in sas switch doesn't work as verified using:
 https://stackoverflow.com/questions/48789499/what-is-the-meaning-of-the-eoferror-after-i-execute-a-command-with-paramiko
 
+
+# questions
+1. to assoicate expanders' phy with ServerBlades, ConnectionBlades, or Harddisks do we assume that user knows the mapping or do we take it as input or discover it
