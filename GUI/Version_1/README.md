@@ -1,1 +1,0 @@
-Basic design - full input 
