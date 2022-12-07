@@ -1,5 +1,6 @@
 import paramiko 
 from time import sleep
+import re
 
 
 CONNECTION_SERVER_IP="10.117.3.2"
@@ -18,7 +19,7 @@ ssh_connection_server.connect(CONNECTION_SERVER_IP, username=CONNECTION_SERVER_U
 # ssh to SAS5 server
 ssh_connection_server_transport = ssh_connection_server.get_transport()
 print("got transport")
-ssh_connection_server_channel = ssh_connection_server_transport.open_channel("direct-tcpip", dest_addr=(SAS6_SERVER_IP, 22), src_addr=("127.0.0.1", 1234))
+ssh_connection_server_channel = ssh_connection_server_transport.open_channel("direct-tcpip", dest_addr=(SAS5_SERVER_IP, 22), src_addr=("127.0.0.1", 1234))
 print("got channel")
 
 ssh_sas5_server = paramiko.SSHClient()
@@ -28,18 +29,20 @@ print("connected to sas")
 chan = ssh_sas5_server.invoke_shell()
 
 buff = ''
-while not buff.endswith('SDMCLI>'):
-    resp = chan.recv(1).decode()
-    buff += resp
+while not buff.endswith('SDMCLI> '):
+    buff += chan.recv(1).decode()
 print(buff)
-sleep(5)
-chan.send("help\n")
-sleep(5)
+
+chan.send("show zonegr newzg\r")
+
 buff = ''
-while not buff.endswith('SDMCLI>'):
-    resp = chan.recv(1).decode()
-    buff += resp
-print(buff)
+while not buff.endswith('SDMCLI> '):
+    buff += chan.recv(1).decode()
+
+print(buff, "\n\n")
+
+ptrn = re.findall(r"newzg\n(.*\n)*", buff)
+print(ptrn)
 
 
 ssh_sas5_server.close()

@@ -24,31 +24,18 @@ passwd = lambda zones, opass, npass: f"{opass}\n\n{npass}\n\n{npass}\n\n"
 """
 Expanders:
 - SAS_ConnectionBlade_06 (connected to all bladeservers, SX980_07, and SX980_15)
+- SAS_ConnectionBlade_05 (connected to all bladeservers, SX980_07, and SX980_15)
 - SX980_07 (connected to SAS_ConnectionBlade_06 and 10 HDD disks)
 - SX980_15 (connected to SAS_ConnectionBlade_06 and 10 HDD disks)
 
-Each expander has phy number (SAS_ConnectionBlade_06 00:63, SX980_07's 00:21, and SX980_15 00:21) which corresponds to connection port number,
+Each expander has phy number (SAS_ConnectionBlade_06,05 00:63, SX980_07's 00:21, and SX980_15 00:21) which corresponds to connection port number,
 which is connected to another device as a ServerBlade, HDD disk, or even an expander.
 
 Adding to a zonegroup requires an expander and the phy connected to that expander to be added.
-Expanders are almost all aliased (SAS_ConnectionBlade_06 is an alias). Real names are called SAS Adress.
+Expanders are almost all aliased (SAS_ConnectionBlade_06 is an alias). Real names are called SAS Address.
 """
 
 """
-To activate a zoneset we need to deactivate any activated zoneset. Only 1 may be activated
+To activate a zoneset we need to deactivate any activated zoneset. Only 1 may be activated.
 After entering a passwd for activation or deactivation, double enter is needed.
 """
-
-def config_zonegr_script(name: str, exp_phy: dict[str: str]) -> str:
-    output = ""
-    output += create_zonegr(name)
-    for expander, phy in exp_phy.items():
-        output += add_zonegr(name, expander, phy)
-    return output
-
-def config_zones_script(name: str, zonegr: dict[str: str]) -> str:
-    output = ""
-    output += create_zones(name)
-    for zonegroup1, zonegroup2 in zonegr.items():
-        output += add_zones(name, zonegroup1, zonegroup1)
-    return output

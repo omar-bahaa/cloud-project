@@ -74,6 +74,390 @@ version - Display the version of Management Blade firmware.
 
 # targets:
 
+</OEMSVS> BX900S2 -> 
+
+# not all of them are actually there, some are just empty slots.
+# to poweron a server use:
+start ServerBlade#
+
+# to poweroff a server use:
+stop ServerBlade#
+
+
+
+----
+
+# notes
+1. ssh on sas is so slow, wait between commands
+2. needed input: slots of which servers, stroagedevices, and switches are (da 8er el ips)
+    ServerBlades slots in rack 4:
+        1, 2,  3,  4,  17,  5,  6
+        9, 10, 11, 12, 18, 13, 14
+    StorageBlades slots in rack 4:
+        7
+        15
+    switches:
+        1, 2
+    Sas switches:
+        5, 6
+3. Each ServerBlade is connected to ConnectionBlade_06 using their ports: 6, 7
+4. ConnectionBlade ports:
+        00,01 04,05 , ... 
+        02.03 06,07 , ...
+5. nrsm graph
+6. f max of 16 characters for an alias
+
+using paramiko's exec_command in sas switch doesn't work as verified using:
+https://stackoverflow.com/questions/48789499/what-is-the-meaning-of-the-eoferror-after-i-execute-a-command-with-paramiko
+
+
+# questions
+1. to assoicate expanders' phy with ServerBlades, ConnectionBlades, or Harddisks do we assume that user knows the mapping or do we take it as input or discover it
+
+
+-------------
+SDMCLI> show device
+
+                   Device                                        Parent
+================================================ ===============================
+          Num   Alias /                          Alias /
+Type      Phys  SAS Address      Phys            SAS Address      Phys
+------------------------------------------------ -------------------------------
+Switch     64+2 SAS_ConnectionB*                                             
+End        02   ServerBlade_01   04-05           SAS_ConnectionB* 00-01      
+End        02   ServerBlade_09   04-05           SAS_ConnectionB* 02-03      
+End        02   ServerBlade_02   04-05           SAS_ConnectionB* 04-05      
+End        02   ServerBlade_10   04-05           SAS_ConnectionB* 06-07      
+End        02   ServerBlade_03   04-05           SAS_ConnectionB* 08-09      
+End        02   ServerBlade_04   04-05           SAS_ConnectionB* 12-13      
+End        02   ServerBlade_05   04-05           SAS_ConnectionB* 16-17      
+End        02   ServerBlade_06   04-05           SAS_ConnectionB* 20-21      
+End        02   ServerBlade_14   04-05           SAS_ConnectionB* 22-23      
+End        02   ServerBlade_17   04-05           SAS_ConnectionB* 32-33      
+End        01   50030050000a1e7d 00              SAS_ConnectionB* 64         
+Switch     20+2 SX980_07         16-17-18-19     SAS_ConnectionB* 24-25-28-29
+End        01   HDD_SAS_709      00              SX980_07         00         
+End        01   HDD_SAS_708      00              SX980_07         01         
+End        01   HDD_SAS_707      00              SX980_07         02         
+End        01   HDD_SAS_706      00              SX980_07         03         
+End        01   HDD_SAS_705      00              SX980_07         04         
+End        01   HDD_SAS_704      00              SX980_07         05         
+End        01   HDD_SAS_703      00              SX980_07         06         
+End        01   HDD_SAS_702      00              SX980_07         07         
+End        01   HDD_SAS_701      00              SX980_07         08         
+End        01   HDD_SAS_700      00              SX980_07         09         
+End        01   500300500009f0bd 00              SX980_07         20         
+Switch     20+2 SX980_15         16-17-18-19     SAS_ConnectionB* 26-27-30-31
+End        01   HDD_SAS_1509     00              SX980_15         00         
+End        01   HDD_SAS_1508     00              SX980_15         01         
+End        01   HDD_SAS_1507     00              SX980_15         02         
+End        01   HDD_SAS_1506     00              SX980_15         03         
+End        01   HDD_SAS_1505     00              SX980_15         04         
+End        01   HDD_SAS_1504     00              SX980_15         05         
+End        01   HDD_SAS_1503     00              SX980_15         06         
+End        01   HDD_SAS_1502     00              SX980_15         07         
+End        01   HDD_SAS_1501     00              SX980_15         08         
+End        01   HDD_SAS_1500     00              SX980_15         09         
+End        01   500300500009ecfd 00              SX980_15         20         
+
+
+SDMCLI> show phy
+Notes:
+  - RA - Routing Attributes :  * phy is an Invalid T to T link.
+  - VP   - Virtual PHY
+  - LS/S - Link Speed/Status:  1.5|3.0|6.0 Gb/s
+                              - phy enabled but link uninitialized
+                              * phy disabled
+  - ZG   - Zone Grp
+    Zoning Active:  Zone Group Number
+    Zoning Inactive:  * phy may be assigned to a zone group
+                      - phy may not be assigned to a zone group
+  - Capabilities
+     1xxxxxxxx - Attached SMP Initiator
+     x1xxxxxxx - Attached STP Initiator
+     xx1xxxxxx - Attached SSP Initiator
+     xxx1xxxxx - Attached SATA Host
+     xxxx1xxxx - Attached SMP Target
+     xxxxx1xxx - Attached STP Target
+     xxxxxx1xx - Attached SSP Target
+     xxxxxxx1x - Attached SATA Target
+     xxxxxxxx1 - Attached SATA Port Selector
+
+                Phy                                     Attached
+===================================== ==========================================
+Alias /                               Alias /               Device  Capabilities
+SAS Address      Phy RA VP LS/S  ZG   SAS Address      Phy  Type      IIIITTTTS
+------------------------------------- ------------------------------------------
+SAS_ConnectionB* 00  T   -   6.0  *    ServerBlade_01   005  End       111000000
+SAS_ConnectionB* 01  T   -   6.0  *    ServerBlade_01   004  End       111000000
+SAS_ConnectionB* 02  T   -   6.0  *    ServerBlade_09   005  End       111000000
+SAS_ConnectionB* 03  T   -   6.0  *    ServerBlade_09   004  End       111000000
+SAS_ConnectionB* 04  T   -   6.0  *    ServerBlade_02   005  End       111000000
+SAS_ConnectionB* 05  T   -   6.0  *    ServerBlade_02   004  End       111000000
+SAS_ConnectionB* 06  T   -   6.0  *    ServerBlade_10   005  End       111000000
+SAS_ConnectionB* 07  T   -   6.0  *    ServerBlade_10   004  End       111000000
+SAS_ConnectionB* 08  T   -   6.0  *    ServerBlade_03   005  End       111000000
+SAS_ConnectionB* 09  T   -   6.0  *    ServerBlade_03   004  End       111000000
+SAS_ConnectionB* 10  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 11  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 12  T   -   6.0  *    ServerBlade_04   005  End       111000000
+SAS_ConnectionB* 13  T   -   6.0  *    ServerBlade_04   004  End       111000000
+SAS_ConnectionB* 14  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 15  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 16  T   -   6.0  *    ServerBlade_05   005  End       111000000
+SAS_ConnectionB* 17  T   -   6.0  *    ServerBlade_05   004  End       111000000
+SAS_ConnectionB* 18  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 19  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 20  T   -   6.0  *    ServerBlade_06   005  End       111000000
+SAS_ConnectionB* 21  T   -   6.0  *    ServerBlade_06   004  End       111000000
+SAS_ConnectionB* 22  T   -   6.0  *    ServerBlade_14   005  End       111000000
+SAS_ConnectionB* 23  T   -   6.0  *    ServerBlade_14   004  End       111000000
+SAS_ConnectionB* 24  T   -   6.0  -    SX980_07         016  ZExpander 000010000
+SAS_ConnectionB* 25  T   -   6.0  -    SX980_07         017  ZExpander 000010000
+SAS_ConnectionB* 26  T   -   6.0  -    SX980_15         018  ZExpander 000010000
+SAS_ConnectionB* 27  T   -   6.0  -    SX980_15         019  ZExpander 000010000
+SAS_ConnectionB* 28  T   -   6.0  -    SX980_07         018  ZExpander 000010000
+SAS_ConnectionB* 29  T   -   6.0  -    SX980_07         019  ZExpander 000010000
+SAS_ConnectionB* 30  T   -   6.0  -    SX980_15         016  ZExpander 000010000
+SAS_ConnectionB* 31  T   -   6.0  -    SX980_15         017  ZExpander 000010000
+SAS_ConnectionB* 32  T   -   6.0  *    ServerBlade_17   005  End       111000000
+SAS_ConnectionB* 33  T   -   6.0  *    ServerBlade_17   004  End       111000000
+SAS_ConnectionB* 34  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 35  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 36  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 37  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 38  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 39  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 40  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 41  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 42  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 43  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 44  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 45  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 46  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 47  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 48  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 49  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 50  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 51  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 52  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 53  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 54  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 55  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 56  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 57  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 58  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 59  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 60  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 61  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 62  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 63  T   -    -   *    ---------------- ---  None      000000000
+SAS_ConnectionB* 64  D   *   6.0  -    50030050000a1e7d 000  End       101000100
+SAS_ConnectionB* 65  D   *    -   -    ---------------- ---  None      000000000
+SX980_07         00  T   -   6.0  *    HDD_SAS_709      000  End       000000100
+SX980_07         01  T   -   6.0  *    HDD_SAS_708      000  End       000000100
+SX980_07         02  T   -   6.0  *    HDD_SAS_707      000  End       000000100
+SX980_07         03  T   -   6.0  *    HDD_SAS_706      000  End       000000100
+SX980_07         04  T   -   6.0  *    HDD_SAS_705      000  End       000000100
+SX980_07         05  T   -   6.0  *    HDD_SAS_704      000  End       000000100
+SX980_07         06  T   -   6.0  *    HDD_SAS_703      000  End       000000100
+SX980_07         07  T   -   6.0  *    HDD_SAS_702      000  End       000000100
+SX980_07         08  T   -   6.0  *    HDD_SAS_701      000  End       000000100
+SX980_07         09  T   -   6.0  *    HDD_SAS_700      000  End       000000100
+SX980_07         10  T   -    *   *    ---------------- ---  None      000000000
+SX980_07         11  T   -    *   *    ---------------- ---  None      000000000
+SX980_07         12  T   -    -   *    ---------------- ---  None      000000000
+SX980_07         13  T   -    -   *    ---------------- ---  None      000000000
+SX980_07         14  T   -    -   *    ---------------- ---  None      000000000
+SX980_07         15  T   -    -   *    ---------------- ---  None      000000000
+SX980_07         16  T   -   6.0  -    SAS_ConnectionB* 024  Switch    000010000
+SX980_07         17  T   -   6.0  -    SAS_ConnectionB* 025  Switch    000010000
+SX980_07         18  T   -   6.0  -    SAS_ConnectionB* 028  Switch    000010000
+SX980_07         19  T   -   6.0  -    SAS_ConnectionB* 029  Switch    000010000
+SX980_07         20  D   *   6.0  -    500300500009f0bd 000  End       101000100
+SX980_07         21  D   *    -   -    ---------------- ---  None      000000000
+SX980_15         00  T   -   6.0  *    HDD_SAS_1509     000  End       000000100
+SX980_15         01  T   -   6.0  *    HDD_SAS_1508     000  End       000000100
+SX980_15         02  T   -   6.0  *    HDD_SAS_1507     000  End       000000100
+SX980_15         03  T   -   6.0  *    HDD_SAS_1506     000  End       000000100
+SX980_15         04  T   -   6.0  *    HDD_SAS_1505     000  End       000000100
+SX980_15         05  T   -   6.0  *    HDD_SAS_1504     000  End       000000100
+SX980_15         06  T   -   6.0  *    HDD_SAS_1503     000  End       000000100
+SX980_15         07  T   -   6.0  *    HDD_SAS_1502     000  End       000000100
+SX980_15         08  T   -   6.0  *    HDD_SAS_1501     000  End       000000100
+SX980_15         09  T   -   6.0  *    HDD_SAS_1500     000  End       000000100
+SX980_15         10  T   -    *   *    ---------------- ---  None      000000000
+SX980_15         11  T   -    *   *    ---------------- ---  None      000000000
+SX980_15         12  T   -    -   *    ---------------- ---  None      000000000
+SX980_15         13  T   -    -   *    ---------------- ---  None      000000000
+SX980_15         14  T   -    -   *    ---------------- ---  None      000000000
+SX980_15         15  T   -    -   *    ---------------- ---  None      000000000
+SX980_15         16  T   -   6.0  -    SAS_ConnectionB* 030  Switch    000010000
+SX980_15         17  T   -   6.0  -    SAS_ConnectionB* 031  Switch    000010000
+SX980_15         18  T   -   6.0  -    SAS_ConnectionB* 026  Switch    000010000
+SX980_15         19  T   -   6.0  -    SAS_ConnectionB* 027  Switch    000010000
+SX980_15         20  D   *   6.0  -    500300500009ecfd 000  End       101000100
+SX980_15         21  D   *    -   -    ---------------- ---  None      000000000
+
+
+SDMCLI> show alias
+SAS Address          Alias
+-----------------------------------------------------
+500003987831b91e     HDD_SAS_1500
+500003987831bb12     HDD_SAS_1501
+500003987831bc96     HDD_SAS_1502
+500003987831bc9a     HDD_SAS_1503
+500003987831bc9e     HDD_SAS_1504
+500003987831bcce     HDD_SAS_1505
+500003987831b9fe     HDD_SAS_1506
+500003987831bd36     HDD_SAS_1507
+500003987831bc8a     HDD_SAS_1508
+500003987831bc5a     HDD_SAS_1509
+500003987831bd3a     HDD_SAS_700
+500003987831bd22     HDD_SAS_701
+500003987831bc86     HDD_SAS_702
+500003987831bc72     HDD_SAS_703
+500003987831bd32     HDD_SAS_704
+500003987831bc76     HDD_SAS_705
+500003987831bd1a     HDD_SAS_706
+500003987831bcd2     HDD_SAS_707
+500003987831bd0a     HDD_SAS_708
+500003987831bd16     HDD_SAS_709
+50030050000a1e7f     SAS_ConnectionBlade_05
+500300500009f0bf     SX980_07
+500300500009ecff     SX980_15
+50030057028e3ba4     ServerBlade_01
+50030057028e3a34     ServerBlade_02
+50030057028e3c74     ServerBlade_03
+50030057028e3ac4     ServerBlade_04
+50030057028e3ab4     ServerBlade_05
+50030057028e3b04     ServerBlade_06
+50030057028e3c54     ServerBlade_09
+50030057028e3bb4     ServerBlade_10
+50030057028e3bc4     ServerBlade_14
+50030057028e3c94     ServerBlade_17
+
+
+SDMCLI> show zonegr newzg 
+Zone Group
+    Member Alias/SAS Address: Phy List
+--------------------------------------
+newzg:
+SX980_15        : 12
+SAS_ConnectionB*: 10 11
+SX980_07        : 10
+
+
+SDMCLI> show zones
+ZoneSets
+--------
+Manual_Zone_Set
+
+
+SDMCLI> show zonegr
+Zone Groups
+-----------
+ZG_ServerBlade_01
+ZG_ServerBlade_09
+ZG_ServerBlade_02
+ZG_ServerBlade_10
+ZG_ServerBlade_03
+ZG_ServerBlade_11
+ZG_ServerBlade_04
+ZG_ServerBlade_12
+ZG_ServerBlade_05
+ZG_ServerBlade_13
+ZG_ServerBlade_06
+ZG_ServerBlade_14
+ZG_ServerBlade_17
+ZG_ServerBlade_18
+ZG_HDD_709
+ZG_HDD_708
+ZG_HDD_707
+ZG_HDD_706
+ZG_HDD_705
+ZG_HDD_704
+ZG_HDD_703
+ZG_HDD_702
+ZG_HDD_701
+ZG_HDD_700
+ZG_HDD_1509
+ZG_HDD_1508
+ZG_HDD_1507
+ZG_HDD_1506
+newZG
+ZG_HDD_RAID_1500_to_1505
+newzg
+
+SDMCLI> show zones data Manual_Zone_Set
+Zone Set
+    Zone Group: Permitted Zone Group List
+        Member Alias/SAS Address: Phy List
+------------------------------------------
+Manual_Zone_Set*:
+    ZG_HDD_1506:  ZG_ServerBlade_18
+SX980_15        : 03
+    ZG_HDD_1507:  ZG_ServerBlade_17
+SX980_15        : 02
+    ZG_HDD_1508:  ZG_ServerBlade_14
+SX980_15        : 01
+    ZG_HDD_1509:  ZG_ServerBlade_06
+SX980_15        : 00
+    ZG_HDD_700:  ZG_ServerBlade_13
+SX980_07        : 09
+    ZG_HDD_701:  ZG_ServerBlade_05
+SX980_07        : 08
+    ZG_HDD_702:  ZG_ServerBlade_12
+SX980_07        : 07
+    ZG_HDD_703:  ZG_ServerBlade_04
+SX980_07        : 06
+    ZG_HDD_704:  ZG_ServerBlade_11
+SX980_07        : 05
+    ZG_HDD_705:  ZG_ServerBlade_03
+SX980_07        : 04
+    ZG_HDD_706:  ZG_ServerBlade_10
+SX980_07        : 03
+    ZG_HDD_707:  ZG_ServerBlade_02
+SX980_07        : 02
+    ZG_HDD_708:  ZG_ServerBlade_09
+SX980_07        : 01
+    ZG_HDD_709:  ZG_ServerBlade_01
+SX980_07        : 00
+    ZG_HDD_RAID_1500_to_1505:  ZG_ServerBlade_01
+SX980_15        : 04 05 06 07 08 09
+    ZG_ServerBlade_01:  ZG_HDD_709 ZG_HDD_RAID_1500_to_1505
+SAS_ConnectionB*: 00 01
+    ZG_ServerBlade_02:  ZG_HDD_707
+SAS_ConnectionB*: 04 05
+    ZG_ServerBlade_03:  ZG_HDD_705
+SAS_ConnectionB*: 08 09
+    ZG_ServerBlade_04:  ZG_HDD_703
+SAS_ConnectionB*: 12 13
+    ZG_ServerBlade_05:  ZG_HDD_701
+SAS_ConnectionB*: 16 17
+    ZG_ServerBlade_06:  ZG_HDD_1509
+SAS_ConnectionB*: 20 21
+    ZG_ServerBlade_09:  ZG_HDD_708
+SAS_ConnectionB*: 02 03
+    ZG_ServerBlade_10:  ZG_HDD_706
+SAS_ConnectionB*: 06 07
+    ZG_ServerBlade_11:  ZG_HDD_704
+SAS_ConnectionB*: 10 11
+    ZG_ServerBlade_12:  ZG_HDD_702
+SAS_ConnectionB*: 14 15
+    ZG_ServerBlade_13:  ZG_HDD_700
+SAS_ConnectionB*: 18 19
+    ZG_ServerBlade_14:  ZG_HDD_1508
+SAS_ConnectionB*: 22 23
+    ZG_ServerBlade_17:  ZG_HDD_1507
+SAS_ConnectionB*: 32 33
+    ZG_ServerBlade_18:  ZG_HDD_1506
+SAS_ConnectionB*: 34 35
+
+
+-------------------------------
+
+
 </OEMSVS> BX900S2 -> show
 status = 0
 status_tag = COMMAND COMPLETED
@@ -134,40 +518,9 @@ status_tag = COMMAND COMPLETED
     Verbs
       cd exit help set show version
 
-</OEMSVS> BX900S2 -> 
 
-# not all of them are actually there, some are just empty slots.
-# to poweron a server use:
-start ServerBlade#
+</OEMSVS> BX900S2 -> version
+status = 0
+status_tag = COMMAND COMPLETED
 
-# to poweroff a server use:
-stop ServerBlade#
-
-
-
-----
-
-# notes
-1. ssh on sas is so slow, wait between commands
-2. needed input: slots of which servers, stroagedevices, and switches are (da 8er el ips)
-    ServerBlades slots in rack 4:
-        1, 2,  3,  4,  17,  5,  6
-        9, 10, 11, 12, 18, 13, 14
-    StorageBlades slots in rack 4:
-        7
-        15
-    switches:
-        1, 2
-    Sas switches:
-        5, 6
-3. Each ServerBlade is connected to ConnectionBlade_06 using their ports: 6, 7
-4. ConnectionBlade ports:
-        00,01 04,05 , ... 
-        02.03 06,07 , ...
-
-using paramiko's exec_command in sas switch doesn't work as verified using:
-https://stackoverflow.com/questions/48789499/what-is-the-meaning-of-the-eoferror-after-i-execute-a-command-with-paramiko
-
-
-# questions
-1. to assoicate expanders' phy with ServerBlades, ConnectionBlades, or Harddisks do we assume that user knows the mapping or do we take it as input or discover it
+MMB Firmware Version 6.00
