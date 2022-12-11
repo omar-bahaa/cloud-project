@@ -1,0 +1,24 @@
+for file in readline-6.2-11.el7.x86_64.rpm gmp-6.0.0-15.el7.x86_64.rpm python-2.7.5-89.el7.x86_64.rpm libxml2-2.9.1-6.el7.5.x86_64.rpm libxml2-python-2.9.1-6.el7.5.x86_64.rpm expat-2.1.0-12.el7.x86_64.rpm python3-3.6.8-17.el7.x86_64.rpm sqlite-3.7.17-8.el7_7.1.x86_64.rpm elfutils-0.176-5.el7.x86_64.rpm rpm-python-4.11.3-45.el7.x86_64.rpm m2crypto-0.21.1-17.el7.x86_64.rpm python-urlgrabber-3.10-10.el7.noarch.rpm yum-3.4.3-168.el7.centos.noarch.rpm 
+do
+ rpm -Uvh http://mirror.centos.org/centos-7/7/os/x86_64/Packages/$file;
+done
+/usr/bin/yum -y install sudo
+mkdir -p a/b
+sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+yum -y install epel-release
+yum -y update
+yum -y install mariadb-server mariadb
+yum -y install centos-release-scl-rh
+gpg --keyserver keyserver.ubuntu.com --recv-key
+\curl -sSL https://get.rvm.io | bash
+source /home/$USER/.rvm/scripts/rvm
+rvm install 2.6.3
+systemctl start firewalld
+firewall-cmd --state
+firewall-cmd --add-port=9869/tcp --permanent
+firewall-cmd --add-port=2633/tcp --permanent
+firewall-cmd --reload
+apt-get update
+yum -y install opennebula-node-kvm
+systemctl restart libvirtd
+firewall-cmd --add-port=9869/tcp --permanent
