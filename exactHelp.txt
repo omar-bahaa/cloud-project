@@ -1,0 +1,1428 @@
+SDMCLI> alias create
+ERROR:  Additional input required
+alias create 
+      The alias create command creates aliases.  An alias is a user
+      defined name that is bound to a SAS Address.  Once created, the
+      alias can be used anywhere that a SAS Address would normally be used. 
+   Syntax: 
+      alias create <name> <sas_address> 
+ 
+   Usage: 
+      alias create <name> <sas_address>
+         Create an alias <name> for the SAS Address <sas_address>.
+         <name> is a string of up to 24 characters.  Valid characters
+         are A-Z, a-z, 0-9, #, -, _ 
+
+   Examples: 
+      o Create an alias
+        sdmcli> alias create mydisk 500605b000029b7f 
+
+SDMCLI> alias delete
+ERROR:  Additional input required
+alias delete 
+       The alias delete command deletes aliases. 
+   Syntax: 
+       alias delete single <name>
+       alias delete all [noconfirm] 
+ 
+   Usage: 
+       alias delete single <name>
+          Delete the alias <name>.
+       alias delete all [noconfirm]
+          Aliases will be deleted without displaying any confirmation 
+          prompt else a confirmation prompt will be displayed.
+ 
+
+   Examples: 
+      o Delete an alias
+        sdmcli> alias delete single mydisk
+      o Delete all aliases without confirmation
+        sdmcli> alias delete all noconfirm
+      o Delete all aliases with confirmation
+        sdmcli> alias delete all
+        Are you sure you want to delete all aliases (yes/no)?
+        no
+        Operation cancelled by user.
+ 
+
+SDMCLI> alias rename
+ERROR:  Additional input required
+
+                                 alias rename 
+      The 'alias rename' command renames an alias. 
+   Syntax: 
+      alias rename <old_name> <new_name>
+ 
+ 
+   Usage: 
+      alias rename <old name> <new name>
+         Rename the alias.
+         Rename alias from <old_name> to <new_name> 
+
+   Examples: 
+      o Rename an alias from 'switch' to 'mySwitch''
+        sdmcli> alias rename switch mySwitch
+ 
+
+SDMCLI> device
+ERROR:  Additional input required
+device 
+      The device command configures individual expanders or switches
+      within the domain. 
+   Syntax: 
+      device (<sas_address> | <alias>)[:<phy>] [command] 
+
+Available commands for device are:
+      disable        - Disable a specific expander PHY
+      enable         - Enable a specific expander PHY
+      reset          - Resets a device, PHY, or PHY counters
+      update         - Installs a new firmware image on a device
+      rescan         - Updates the SES data for the device
+      ip             - Updates the IP address of a switch
+      date           - Updates the date and time of a switch/expander.
+      snmp           - Updates the SNMP values.
+      monitor        - Updates performance monitor set and time base.
+      threshold      - Updates the threshold values of a switch/expander. 
+
+SDMCLI> device disable
+ERROR:  Additional input required
+device disable 
+      The device disable command disables a specific expander PHY. 
+   Syntax: 
+      device (<sas_address> | <alias>):<phy> disable 
+ 
+   Usage: 
+      device (<sas_address> | <alias>):<phy> disable
+         Disables the expander PHY from transmitting and receiving. 
+
+   Examples: 
+      o Disable PHY 2 of the expander
+       sdmcli> device 500605b00002453f:2 disable
+       Enable phy number 2 (yes/no)? yes
+       PHY 2 was successfully disabled.
+ 
+
+SDMCLI> device enable
+ERROR:  Additional input required
+device enable 
+      The device enable command enables a specific expander PHY. 
+   Syntax: 
+      device (<sas_address> | <alias>):<phy> enable 
+ 
+   Usage: 
+      device (<sas_address> | <alias>):<phy> enable
+         Enables the expander PHY to transmit and receive. 
+
+   Examples: 
+      o Enable PHY 2 of the expander
+       sdmcli> device 500605b00002453f:2 enable
+       Enable phy number 2 (yes/no)? yes
+       PHY 2 was successfully enabled.
+ 
+
+SDMCLI> device reset
+ERROR:  Additional input required
+device reset 
+      The device reset command allows for resetting the entire
+      expander or switch, an individual PHY, or the PHY counters
+      on an expander or switch. 
+   Syntax: 
+      device (<sas_address> | <alias>)[:<phy>] reset [counters] [noconfirm] 
+ 
+   Usage: 
+      device (<sas_address> | <alias>) reset [noconfirm]
+         Resets the entire expander or switch.  If 'noconfirm' is
+         specified the reset will happen immediately without any
+         additional prompting.
+      device (<sas_address> | <alias>):<phy> reset
+         Resets the individual PHY on an expander or switch.
+         Before resetting, user confirmation is required.
+      device (<sas_address> | <alias>):<phy> reset counters
+         Clears the PHY's counters. 
+
+   Examples: 
+      o Reset the expander without a warning prompt
+        sdmcli> device 500605b0002453f reset noconfirm
+      o Reset the expander with a warning prompt
+        sdmcli> device 500605b0002453f reset
+        Note: SDM client's connection to the server will be lost 
+        when the server's host expander is reset
+        The client will have to log in again to reestablish the connection.
+        Reset Expander/Switch 500605b0002453f (yes/no)? yes
+      o Reset the phy with a warning prompt
+        sdmcli> device 500605b00002453f:6 reset
+        Reset Phy number 6 (yes/no)? yes
+        PHY reset successful.
+      o Clear PHY 21's counters
+        sdmcli> device 500605b000024534:21 reset counters 
+
+SDMCLI> device update
+ERROR:  Additional input required
+device update 
+      The device update command is used to install a new firmware
+      image on a device. 
+   Syntax: 
+      device (<sas_address> | <alias>) update <file> <tftp server ip> 
+ 
+   Usage: 
+      device (<sas_address> | <alias>) update <file> <tftp server ip>
+         Updates the firmware on the expander/switch where <file> is
+         the firmware image file and <tftp server ip> is the IP of TFTP
+         server on which firmware file is hosted.
+ 
+
+   Examples: 
+      o Update the expander's firmware version
+        sdmcli> device 500605b0002453f update sasx36fw.fw 192.168.18.4
+        Replace the current firmware version 200.7.55.0 with version 200.7.55.0 (yes or
+        no)? no
+        Firmware download aborted.
+ 
+
+SDMCLI> device rescan
+ERROR:  Additional input required
+device rescan 
+      The device rescan command is used to rescan the SES data 
+      for the expander. 
+   Syntax: 
+      device (<sas_address> | <alias>) rescan 
+ 
+   Usage: 
+      device (<sas_address> | <alias>) rescan 
+         Updates the SES data for the expander. 
+
+   Examples: 
+      o Update the expander's SES data
+        sdmcli> device 500605b0002453f rescan
+ 
+
+SDMCLI> device ip
+ERROR:  Additional input required
+device ip 
+      The device ip command is used to configure IP address
+      for the switch. 
+   Syntax: 
+      device (<sas_address> | <alias>) ip 
+ 
+   Usage: 
+      device (<sas_address> | <alias>) ip (dhcp | static <ip address> <mask> <gateway>) 
+         Configure IP address for the switch. 
+
+   Examples: 
+       Configure IP address for the switch for DHCP.
+        sdmcli> device 500605b0002453f ip dhcp
+       Configure IP address for the switch for Static Ip.
+        sdmcli> device 500605b0002453f ip static 172.21.25.204 255.255.255.0 172.21.25.1.
+ 
+
+SDMCLI> device date
+ERROR:  Additional input required
+device date 
+      The device date command sets date and time
+      of the switch/expander 
+   Syntax: 
+      device (<sas_address> | <alias>) date <DAY YYYY-MM-DDThh:mm:ss> 
+
+   Examples: 
+      o Sets date and time.
+        sdmcli> device 500605b00002453f date WED 2010-11-12T13:14:15
+        sdmcli> device switch date WED 2010-11-12T13:14:15 
+ 
+
+SDMCLI> device snmp
+ERROR:  Additional input required
+device snmp 
+      The device snmp command enables user to set various SNMP 
+      configuration values. Only Switch is supported as device type for
+      this command. 
+  
+   Syntax: 
+      device (<sas_address> | <alias>) snmp agentsecurity authsecflag
+      device (<sas_address> | <alias>) snmp agentsecurity privsecflag
+      device (<sas_address> | <alias>) snmp agentsecurity username
+      device (<sas_address> | <alias>) snmp agentsecurity authpass
+      device (<sas_address> | <alias>) snmp agentsecurity privpass
+      device (<sas_address> | <alias>) snmp systemmib contactstring 
+      device (<sas_address> | <alias>) snmp systemmib namestring 
+      device (<sas_address> | <alias>) snmp systemmib locationstring 
+ 
+
+   Examples: 
+      o Enables user to set the SNMP configuration values of switch.
+        In case authorization is required,user will be prompted to
+        enter username and password. Example for setting agent security
+        username applies for other commands also.
+        sdmcli> device 500605b00002453f snmp agentsecurity username
+        Enter Username:Bob
+        Enter New User Name:John
+        Re-enter New User Name:John
+        New User Name set successfully.
+        sdmcli> device 500605b00002453f snmp agentsecurity authsecflag
+        sdmcli> device myswitch snmp agentsecurity privsecflag
+        sdmcli> device 500605b00002453f snmp agentsecurity authpass
+        sdmcli> device 500605b00002453f snmp agentsecurity privpass
+        sdmcli> device myswitch snmp systemmib contactstring 
+        sdmcli> device 500605b00002453f snmp systemmib namestring 
+        SDMCLI> device 500605b00002453f snmp systemmib locationstring 
+ 
+
+SDMCLI> device monitor
+ERROR:  Additional input required
+device monitor 
+       The device monitor command allows user to select available performance
+       and error monitor configuration set as well as to change time base.
+       Configuration settings are changed as per configuration set number
+       provided in command. To change timebase, user needs to provide 
+       desired timebase in command.
+ 
+   Syntax: 
+       device (<sas_address> | <alias>) monitor selectconfigset (configuration set number) 
+       device (<sas_address> | <alias>) monitor changetimebase (timebase) 
+ 
+
+   Examples: 
+      o Enables user to set the device monitor settings .
+        sdmcli> device 500605b00002453f monitor selectconfigset 4 
+        sdmcli> device switch monitor changetimebase 10 
+ 
+
+SDMCLI> device threshold
+ERROR:  Additional input required
+threshold 
+      The threshold command enables user to get or set the threshold 
+      values of a SES element of the switch/expander. The threshold values
+      passed through this command may or may not be applied depending 
+      on the device server.
+ 
+   Syntax: 
+      device (<sas_address> | <alias>) threshold <element id>
+      <threshold value High Critical> <threshold value High Warning>
+      <threshold value Low Warning> <threshold value LOW Critical>
+      show device (<sas_address> | <alias>) threshold [<element type>] 
+ 
+
+   Examples: 
+      o Enables user to set the threshold values of a SES element of 
+        switch/expander.
+        sdmcli> device 500605b00002453f threshold 01 02 03 04 05
+        sdmcli> device switch threshold 01 02 03 04 05
+        sdmcli> show device 500605b00002453f threshold 04 
+        sdmcli> show device switch threshold 04 
+        sdmcli> show device switch threshold 
+ 
+
+SDMCLI> domain focus
+ERROR:  Additional input required
+domain focus 
+      The domain focus selects the focused domain overlay 
+   Syntax: 
+      domain focus <overlay name> 
+ 
+   Usage: 
+      domain focus <overlay name>
+         Specifies the domain overlay on which the CLI is focused,
+         where <overlay name> specifies the chosen overlay.
+         Use show domain to show a list of available domain overlays. 
+
+   Examples: 
+      o Specifies focused domain overlay to be 'Denver'.
+        sdmcli> domain focus Denver 
+
+SDMCLI> show alias
+SAS Address          Alias
+-----------------------------------------------------
+500003987831b91e     HDD_SAS_1500
+500003987831bb12     HDD_SAS_1501
+500003987831bc96     HDD_SAS_1502
+500003987831bc9a     HDD_SAS_1503
+500003987831bc9e     HDD_SAS_1504
+500003987831bcce     HDD_SAS_1505
+500003987831b9fe     HDD_SAS_1506
+500003987831bd36     HDD_SAS_1507
+500003987831bc8a     HDD_SAS_1508
+500003987831bc5a     HDD_SAS_1509
+500003987831bd3a     HDD_SAS_700
+500003987831bd22     HDD_SAS_701
+500003987831bc86     HDD_SAS_702
+500003987831bc72     HDD_SAS_703
+500003987831bd32     HDD_SAS_704
+500003987831bc76     HDD_SAS_705
+500003987831bd1a     HDD_SAS_706
+500003987831bcd2     HDD_SAS_707
+500003987831bd0a     HDD_SAS_708
+500003987831bd16     HDD_SAS_709
+50030050000a1e7f     SAS_ConnectionBlade_05
+500300500009f0bf     SX980_07
+500300500009ecff     SX980_15
+50030057028e3ba4     ServerBlade_01
+50030057028e3a34     ServerBlade_02
+50030057028e3c74     ServerBlade_03
+50030057028e3ac4     ServerBlade_04
+50030057028e3ab4     ServerBlade_05
+50030057028e3b04     ServerBlade_06
+50030057028e3c54     ServerBlade_09
+50030057028e3bb4     ServerBlade_10
+50030057028e3bc4     ServerBlade_14
+50030057028e3c94     ServerBlade_17
+
+SDMCLI> show device
+
+                   Device                                        Parent
+================================================ ===============================
+          Num   Alias /                          Alias /
+Type      Phys  SAS Address      Phys            SAS Address      Phys
+------------------------------------------------ -------------------------------
+Switch     64+2 SAS_ConnectionB*                                             
+End        02   ServerBlade_01   04-05           SAS_ConnectionB* 00-01      
+End        02   ServerBlade_09   04-05           SAS_ConnectionB* 02-03      
+End        02   ServerBlade_02   04-05           SAS_ConnectionB* 04-05      
+End        02   ServerBlade_10   04-05           SAS_ConnectionB* 06-07      
+End        02   ServerBlade_03   04-05           SAS_ConnectionB* 08-09      
+End        02   ServerBlade_04   04-05           SAS_ConnectionB* 12-13      
+End        02   ServerBlade_05   04-05           SAS_ConnectionB* 16-17      
+End        02   ServerBlade_06   04-05           SAS_ConnectionB* 20-21      
+End        02   ServerBlade_14   04-05           SAS_ConnectionB* 22-23      
+End        02   ServerBlade_17   04-05           SAS_ConnectionB* 32-33      
+End        01   50030050000a1e7d 00              SAS_ConnectionB* 64         
+Switch     20+2 SX980_07         16-17-18-19     SAS_ConnectionB* 24-25-28-29
+End        01   HDD_SAS_709      00              SX980_07         00         
+End        01   HDD_SAS_708      00              SX980_07         01         
+End        01   HDD_SAS_707      00              SX980_07         02         
+End        01   HDD_SAS_706      00              SX980_07         03         
+End        01   HDD_SAS_705      00              SX980_07         04         
+End        01   HDD_SAS_704      00              SX980_07         05         
+End        01   HDD_SAS_703      00              SX980_07         06         
+End        01   HDD_SAS_702      00              SX980_07         07         
+End        01   HDD_SAS_701      00              SX980_07         08         
+End        01   HDD_SAS_700      00              SX980_07         09         
+End        01   500300500009f0bd 00              SX980_07         20         
+Switch     20+2 SX980_15         16-17-18-19     SAS_ConnectionB* 26-27-30-31
+End        01   HDD_SAS_1509     00              SX980_15         00         
+End        01   HDD_SAS_1508     00              SX980_15         01         
+End        01   HDD_SAS_1507     00              SX980_15         02         
+End        01   HDD_SAS_1506     00              SX980_15         03         
+End        01   HDD_SAS_1505     00              SX980_15         04         
+End        01   HDD_SAS_1504     00              SX980_15         05         
+End        01   HDD_SAS_1503     00              SX980_15         06         
+End        01   HDD_SAS_1502     00              SX980_15         07         
+End        01   HDD_SAS_1501     00              SX980_15         08         
+End        01   HDD_SAS_1500     00              SX980_15         09         
+End        01   500300500009ecfd 00              SX980_15         20         
+
+SDMCLI> show domain
+
+Overlay Name                 Id  Domain Access Point
+---------------------------- --- ---------------------------------------------
+(Domain)                     1   SAS616x (50030050000a1e7f)                    
+
+Note: (Name) denotes focused domain
+      [Name] denotes domain overlays currently not bound to a physical domain
+
+SDMCLI> show phy
+Notes:
+  - RA - Routing Attributes :  * phy is an Invalid T to T link.
+  - VP   - Virtual PHY
+  - LS/S - Link Speed/Status:  1.5|3.0|6.0 Gb/s
+                              - phy enabled but link uninitialized
+                              * phy disabled
+  - ZG   - Zone Grp
+    Zoning Active:  Zone Group Number
+    Zoning Inactive:  * phy may be assigned to a zone group
+                      - phy may not be assigned to a zone group
+  - Capabilities
+     1xxxxxxxx - Attached SMP Initiator
+     x1xxxxxxx - Attached STP Initiator
+     xx1xxxxxx - Attached SSP Initiator
+     xxx1xxxxx - Attached SATA Host
+     xxxx1xxxx - Attached SMP Target
+     xxxxx1xxx - Attached STP Target
+     xxxxxx1xx - Attached SSP Target
+     xxxxxxx1x - Attached SATA Target
+     xxxxxxxx1 - Attached SATA Port Selector
+
+                Phy                                     Attached
+===================================== ==========================================
+Alias /                               Alias /               Device  Capabilities
+SAS Address      Phy RA VP LS/S  ZG   SAS Address      Phy  Type      IIIITTTTS
+------------------------------------- ------------------------------------------
+SAS_ConnectionB* 00  T   -   6.0  8    ServerBlade_01   005  End       111000000
+SAS_ConnectionB* 01  T   -   6.0  8    ServerBlade_01   004  End       111000000
+SAS_ConnectionB* 02  T   -   6.0  9    ServerBlade_09   005  End       111000000
+SAS_ConnectionB* 03  T   -   6.0  9    ServerBlade_09   004  End       111000000
+SAS_ConnectionB* 04  T   -   6.0  10   ServerBlade_02   005  End       111000000
+SAS_ConnectionB* 05  T   -   6.0  10   ServerBlade_02   004  End       111000000
+SAS_ConnectionB* 06  T   -   6.0  11   ServerBlade_10   005  End       111000000
+SAS_ConnectionB* 07  T   -   6.0  11   ServerBlade_10   004  End       111000000
+SAS_ConnectionB* 08  T   -   6.0  12   ServerBlade_03   005  End       111000000
+SAS_ConnectionB* 09  T   -   6.0  12   ServerBlade_03   004  End       111000000
+SAS_ConnectionB* 10  T   -    -   13   ---------------- ---  None      000000000
+SAS_ConnectionB* 11  T   -    -   13   ---------------- ---  None      000000000
+SAS_ConnectionB* 12  T   -   6.0  14   ServerBlade_04   005  End       111000000
+SAS_ConnectionB* 13  T   -   6.0  14   ServerBlade_04   004  End       111000000
+SAS_ConnectionB* 14  T   -    -   15   ---------------- ---  None      000000000
+SAS_ConnectionB* 15  T   -    -   15   ---------------- ---  None      000000000
+SAS_ConnectionB* 16  T   -   6.0  16   ServerBlade_05   005  End       111000000
+SAS_ConnectionB* 17  T   -   6.0  16   ServerBlade_05   004  End       111000000
+SAS_ConnectionB* 18  T   -    -   17   ---------------- ---  None      000000000
+SAS_ConnectionB* 19  T   -    -   17   ---------------- ---  None      000000000
+SAS_ConnectionB* 20  T   -   6.0  18   ServerBlade_06   005  End       111000000
+SAS_ConnectionB* 21  T   -   6.0  18   ServerBlade_06   004  End       111000000
+SAS_ConnectionB* 22  T   -   6.0  19   ServerBlade_14   005  End       111000000
+SAS_ConnectionB* 23  T   -   6.0  19   ServerBlade_14   004  End       111000000
+SAS_ConnectionB* 24  T   -   6.0  1    SX980_07         016  ZExpander 000010000
+SAS_ConnectionB* 25  T   -   6.0  1    SX980_07         017  ZExpander 000010000
+SAS_ConnectionB* 26  T   -   6.0  1    SX980_15         018  ZExpander 000010000
+SAS_ConnectionB* 27  T   -   6.0  1    SX980_15         019  ZExpander 000010000
+SAS_ConnectionB* 28  T   -   6.0  1    SX980_07         018  ZExpander 000010000
+SAS_ConnectionB* 29  T   -   6.0  1    SX980_07         019  ZExpander 000010000
+SAS_ConnectionB* 30  T   -   6.0  1    SX980_15         016  ZExpander 000010000
+SAS_ConnectionB* 31  T   -   6.0  1    SX980_15         017  ZExpander 000010000
+SAS_ConnectionB* 32  T   -   6.0  20   ServerBlade_17   005  End       111000000
+SAS_ConnectionB* 33  T   -   6.0  20   ServerBlade_17   004  End       111000000
+SAS_ConnectionB* 34  T   -    -   21   ---------------- ---  None      000000000
+SAS_ConnectionB* 35  T   -    -   21   ---------------- ---  None      000000000
+SAS_ConnectionB* 36  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 37  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 38  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 39  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 40  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 41  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 42  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 43  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 44  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 45  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 46  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 47  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 48  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 49  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 50  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 51  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 52  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 53  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 54  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 55  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 56  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 57  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 58  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 59  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 60  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 61  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 62  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 63  T   -    -   0    ---------------- ---  None      000000000
+SAS_ConnectionB* 64  D   *   6.0  1    50030050000a1e7d 000  End       101000100
+SAS_ConnectionB* 65  D   *    -   1    ---------------- ---  None      000000000
+SX980_07         00  T   -   6.0  22   HDD_SAS_709      000  End       000000100
+SX980_07         01  T   -   6.0  24   HDD_SAS_708      000  End       000000100
+SX980_07         02  T   -   6.0  25   HDD_SAS_707      000  End       000000100
+SX980_07         03  T   -   6.0  26   HDD_SAS_706      000  End       000000100
+SX980_07         04  T   -   6.0  27   HDD_SAS_705      000  End       000000100
+SX980_07         05  T   -   6.0  28   HDD_SAS_704      000  End       000000100
+SX980_07         06  T   -   6.0  29   HDD_SAS_703      000  End       000000100
+SX980_07         07  T   -   6.0  30   HDD_SAS_702      000  End       000000100
+SX980_07         08  T   -   6.0  31   HDD_SAS_701      000  End       000000100
+SX980_07         09  T   -   6.0  32   HDD_SAS_700      000  End       000000100
+SX980_07         10  T   -    *   0    ---------------- ---  None      000000000
+SX980_07         11  T   -    *   0    ---------------- ---  None      000000000
+SX980_07         12  T   -    -   0    ---------------- ---  None      000000000
+SX980_07         13  T   -    -   0    ---------------- ---  None      000000000
+SX980_07         14  T   -    -   0    ---------------- ---  None      000000000
+SX980_07         15  T   -    -   0    ---------------- ---  None      000000000
+SX980_07         16  T   -   6.0  1    SAS_ConnectionB* 024  Switch    000010000
+SX980_07         17  T   -   6.0  1    SAS_ConnectionB* 025  Switch    000010000
+SX980_07         18  T   -   6.0  1    SAS_ConnectionB* 028  Switch    000010000
+SX980_07         19  T   -   6.0  1    SAS_ConnectionB* 029  Switch    000010000
+SX980_07         20  D   *   6.0  1    500300500009f0bd 000  End       101000100
+SX980_07         21  D   *    -   1    ---------------- ---  None      000000000
+SX980_15         00  T   -   6.0  33   HDD_SAS_1509     000  End       000000100
+SX980_15         01  T   -   6.0  34   HDD_SAS_1508     000  End       000000100
+SX980_15         02  T   -   6.0  35   HDD_SAS_1507     000  End       000000100
+SX980_15         03  T   -   6.0  36   HDD_SAS_1506     000  End       000000100
+SX980_15         04  T   -   6.0  23   HDD_SAS_1505     000  End       000000100
+SX980_15         05  T   -   6.0  23   HDD_SAS_1504     000  End       000000100
+SX980_15         06  T   -   6.0  23   HDD_SAS_1503     000  End       000000100
+SX980_15         07  T   -   6.0  23   HDD_SAS_1502     000  End       000000100
+SX980_15         08  T   -   6.0  23   HDD_SAS_1501     000  End       000000100
+SX980_15         09  T   -   6.0  23   HDD_SAS_1500     000  End       000000100
+SX980_15         10  T   -    *   0    ---------------- ---  None      000000000
+SX980_15         11  T   -    *   0    ---------------- ---  None      000000000
+SX980_15         12  T   -    -   0    ---------------- ---  None      000000000
+SX980_15         13  T   -    -   0    ---------------- ---  None      000000000
+SX980_15         14  T   -    -   0    ---------------- ---  None      000000000
+SX980_15         15  T   -    -   0    ---------------- ---  None      000000000
+SX980_15         16  T   -   6.0  1    SAS_ConnectionB* 030  Switch    000010000
+SX980_15         17  T   -   6.0  1    SAS_ConnectionB* 031  Switch    000010000
+SX980_15         18  T   -   6.0  1    SAS_ConnectionB* 026  Switch    000010000
+SX980_15         19  T   -   6.0  1    SAS_ConnectionB* 027  Switch    000010000
+SX980_15         20  D   *   6.0  1    500300500009ecfd 000  End       101000100
+SX980_15         21  D   *    -   1    ---------------- ---  None      000000000
+
+SDMCLI> show version
+SDM-CLI Version 9.0.128.0 
+SDM-D   Version 9.0.128.0 
+
+SDMCLI> show zonegroup
+Zone Groups
+-----------
+ZG_ServerBlade_01
+ZG_ServerBlade_09
+ZG_ServerBlade_02
+ZG_ServerBlade_10
+ZG_ServerBlade_03
+ZG_ServerBlade_11
+ZG_ServerBlade_04
+ZG_ServerBlade_12
+ZG_ServerBlade_05
+ZG_ServerBlade_13
+ZG_ServerBlade_06
+ZG_ServerBlade_14
+ZG_ServerBlade_17
+ZG_ServerBlade_18
+ZG_HDD_709
+ZG_HDD_708
+ZG_HDD_707
+ZG_HDD_706
+ZG_HDD_705
+ZG_HDD_704
+ZG_HDD_703
+ZG_HDD_702
+ZG_HDD_701
+ZG_HDD_700
+ZG_HDD_1509
+ZG_HDD_1508
+ZG_HDD_1507
+ZG_HDD_1506
+newZG
+ZG_HDD_RAID_1500_to_1505
+
+SDMCLI> show zoneset
+ZoneSets
+--------
+Manual_Zone_Set*
+
+SDMCLI> show log
+
+ Domain:--
+ Severity:optimal
+ TimeStamp:Mon Nov 28 14:20:55 2022
+ Count:1
+ EventDescription:Client 0 is connected. 
+
+
+ Domain:1
+ Severity:optimal
+ TimeStamp:Mon Nov 28 14:24:11 2022
+ Count:64
+ EventDescription:Domain 0 Root expander SAS Address is 50030050000a1e7f 
+
+
+ Domain:1
+ Severity:optimal
+ TimeStamp:Mon Nov 28 14:24:11 2022
+ Count:64
+ EventDescription:Starting Discovery for Domain 1 
+
+
+ Domain:1
+ Severity:optimal
+ TimeStamp:Mon Nov 28 14:24:11 2022
+ Count:64
+ EventDescription:Discovery complete for Domain 1. Domain supports 256 zone groups.
+
+
+ Domain:1
+ Severity:optimal
+ TimeStamp:Mon Nov 28 14:24:12 2022
+ Count:1538
+ EventDescription:SAS CONNECTOR ELEMENT "External Connector 19" status changed. DomainID:1, SES TARGET:50030050000a1e7d
+
+
+ Domain:1
+ Severity:optimal
+ TimeStamp:Mon Nov 28 14:24:12 2022
+ Count:64
+ EventDescription:ENCLOSURE ELEMENT "EnclosureElement01" status changed. DomainID:1, SES TARGET:50030050000a1e7d
+
+
+ Domain:1
+ Severity:optimal
+ TimeStamp:Mon Nov 28 14:36:16 2022
+ Count:342
+ EventDescription:Unable to delete zone set 1 status = 226 
+
+
+ Domain:1
+ Severity:optimal
+ TimeStamp:Mon Nov 28 14:36:16 2022
+ Count:115
+ EventDescription:Domain status changed - DomainID:1 
+
+
+SDMCLI> show invalidt2t
+
+ Table for Invalid T to T Links :
+              Parent Phy                               Child Phy                
+===================================== ==========================================
+Alias /                                  Alias /                                
+SAS Address            Phy               SAS Address              Phy           
+------------------------------------- ------------------------------------------
+
+ There are no entries with daemon.
+
+SDMCLI> show discoveryconfig
+ Discovery is enabled. 
+ Polling interval is 5 seconds.
+ 
+SDMCLI> config backup
+ERROR:  Additional input required
+config backup 
+       The config backup command saves configuration data such as zonegroups,
+       zonesets and aliases. The output is delivered via tftp to the
+       ip-address and  file name specified.
+       The ip-address specified must route to a write-enabled tftp server.
+ 
+   Syntax: 
+       config backup filename ip-address 
+ 
+ 
+   Usage: 
+       config backup filename ip-address
+          filename: The name of the file to create for this back up
+                    i.e. myBackup.bin 
+          ip-address: ip-address of the tftp server where the file is to be sent.
+ 
+
+   Examples: 
+      o To save your configuration to a file named myBackup.bin and send 
+        it to ip-address 10.1.255.255, type:
+        sdmcli> config backup myBackup.bin 10.1.255.255
+ 
+
+SDMCLI> config restore
+ERROR:  Additional input required
+config restore 
+       The config restore command restores a configuration backup file that  
+       was created using the 'config backup' command. The file contains  
+       configuration data such as zone sets, zone groups and aliases. 
+       The file must be accessible via tftp at the ip-address specified by 
+       the user. 
+ 
+   Syntax: 
+       config restore filename ip-address 
+ 
+ 
+   Usage: 
+       config restore filename ip-address
+          filename: The name of the file to be restored i.e. myRestore.bin 
+          ip-address: ip-address of the tftp server where the file is located. 
+ 
+
+   Examples: 
+      o To restore a file named myRestore.bin that is located at 
+        ip-address 10.1.255.255, type: 
+        sdmcli> config restore myRestore.bin 10.1.255.255 
+
+SDMCLI> config discovery
+ERROR:  Additional input required
+config discovery 
+       The config discovery command configures discovery settings. 
+       such as enabling/disabling discovery and setting poll interval. 
+       The default value for discovery setting is enabled and
+       poll interval is 5 seconds.
+ 
+   Syntax: 
+       config discovery <command> 
+ 
+
+Available commands for config discovery are:
+      poll <interval>  - Configures discovery polling interval.
+      enable           - Enables discovery.
+      disable          - Disables discovery.
+ 
+
+SDMCLI> zonegroup add
+ERROR:  Additional input required
+zonegroup add 
+      The zonegroup add command adds a domain phy (a phy on a zoning
+      expander) to an existing zone group.  The phy must be on the edge
+      of the zoned portion of the service delivery subsystem (ZPSDS) i.e.
+      it must be a phy on one of the zoning expanders that comprise the
+      zonable 'cloud' for the domain.  The phy can not be one that is
+      directly connected to another zoning expander (i.e. an inter-switch
+      link.  It also cannot be a virtual phy.
+      NOTE:  Making changes to a zone group will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zonegroup add <name> <sas_address>:<phy_number>
+      zonegroup add <name> <alias>:<phy_number>
+ 
+ 
+   Usage: 
+      zonegroup add <name> <sas_address>:<phy_number>
+      zonegroup add <name> <alias>:<phy_number>
+         Add the phy <phy_number> on the zoning expander indicated by
+         <sas_address> (or <alias>) to the zone group named <name>.
+ 
+
+   Examples: 
+      o Add phy 8 on expander 500605b000029b7f to zone group 'myZoneGroup'
+        sdmcli> zonegroup add myZoneGroup 500605b000029b7f:8
+ 
+
+SDMCLI> zonegroup create
+ERROR:  Additional input required
+zonegroup create 
+      The zonegroup create command creates a new empty zone group.  The
+      zonegroup add/remove commands can be used to add and remove phys from
+      the newly created group.
+      NOTE:  Making changes to a zone group will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zonegroup create <zonegroupName> 
+ 
+   Usage: 
+      zonegroup create <zonegroupName>
+         Create an empty zone group named <zonegroupName>. 
+
+   Examples: 
+      o Create an empty zone group named 'myZoneGroup'
+        sdmcli> zonegroup create myZoneGroup 
+
+SDMCLI> zonegroup delete
+ERROR:  Additional input required
+zonegroup delete 
+      The zonegroup delete command deletes a zone group.
+      NOTE:  Making changes to a zone group will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zonegroup delete single <name>
+      zonegroup delete all [noconfirm] 
+ 
+   Usage: 
+      zonegroup delete single <name>
+         Delete the zonegroup <name>.
+      zonegroup delete all [noconfirm]
+         Delete all defined zonegroups on the system.  If 'noconfirm' is
+         specified then the zonegroups will be deleted without any confirmation
+         prompts. 
+
+   Examples: 
+      o Delete a zonegroup
+        sdmcli> zonegroup delete single myZoneGroup
+      o Delete all zonegroups without confirmation
+        sdmcli> zonegroup delete all noconfirm      o Delete all zonegroups with confirmation
+        sdmcli> zonegroup delete all
+        sdmcli> Are you sure you want to delete all zone groups (yes/no)?
+        yes
+        Zone groups successfully deleted.
+ 
+
+SDMCLI> zonegroup rename
+ERROR:  Additional input required
+zonegroup rename 
+      The zonegroup rename command renames a zone group.
+      NOTE:  Making changes to a zone group will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zonegroup rename <old_zonegroup> <new_zonegroup> 
+ 
+   Usage: 
+      zonegroup rename <old_zonegroup> <new_zonegroup>
+         rename a zone group from <old_zonegroup> to <new_zonegroup> 
+
+   Examples: 
+      o Rename zone group 'myZoneGroup' to 'myNewZoneGroup'
+        sdmcli> zonegroup rename myZoneGroup myNewZoneGroup 
+
+SDMCLI> zonegroup remove
+ERROR:  Additional input required
+zonegroup remove 
+      The zonegroup remove command removes a domain phy from an existing
+      zone group.
+      NOTE:  Making changes to a zone group will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zonegroup remove <name> <sas_address>:<phy_number>
+      zonegroup remove <name> <alias>:<phy_number>
+ 
+ 
+   Usage: 
+      zonegroup remove <name> <sas_address>:<phy_number>
+      zonegroup remove <name> <alias>:<phy_number>
+         Remove the phy <phy_number> on the zoning expander indicated by
+         <sas_address> (or <alias>) from the zone group named <name>.
+ 
+
+   Examples: 
+      o Remove phy 8 on expander 500605b000029b7f from zone group 'myZoneGroup'
+        sdmcli> zonegroup remove myZoneGroup 500605b000029b7f:8
+ 
+
+SDMCLI> zoneset activate
+ERROR:  Additional input required
+zoneset activate 
+      The zoneset activate command removes any previously active zoning
+      in the domain and activates zoning based on the specified zone set.
+      NOTE:  If you activate a zone set and then make changes to the
+             zone set definition or the zone groups that the zone set
+             references, the changes will not take effect in the domain
+             unless the zoneset activate command is executed again for
+             that zone set. 
+   Syntax: 
+      zoneset activate <zonesetName> 
+ 
+   Usage: 
+      zoneset activate <zonesetName>
+         Activates zone set <zonesetName> after prompting the administrator
+         for the zone manager password. 
+
+   Examples: 
+      o Activate zoneset fred.
+        sdmcli> zoneset activate fred
+        Enter the zone manager password (Leave blank for no password):
+        Zoneset fred successfully activated. 
+
+SDMCLI> zoneset add
+ERROR:  Additional input required
+zoneset add 
+      The zoneset add command adds permission between two zone groups
+      to the specified zone set
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain.
+      NOTE:  The phys within a zone group are not granted permission to
+             communicate with each other by default.  If this is desired
+             use this command specifying the same zone group for both
+             <zoneGroupA> and <zoneGroupB> 
+   Syntax: 
+      zoneset add <zonesetName> <zoneGroupA> <zoneGroupB> 
+ 
+   Usage: 
+      zoneset add <zonesetName> <zoneGroupA> <zoneGroupB>
+         Add permission for phys in <zoneGroupA> to access phys in <zoneGroupB>
+         and vise-versa. 
+
+   Examples: 
+      o Add permission between phys in zone group 'initiators' and zone
+        group 'targets'.
+        sdmcli> zoneset add myZoneset initiators targets
+      o Add permission between phys within zone group 'accounting'
+        sdmcli> zoneset add myZoneset accounting accounting 
+
+SDMCLI> zoneset create
+ERROR:  Additional input required
+zoneset create 
+      The zoneset create command creates a new empty zone set.  The
+      zoneset add/remove commands can be used to add and remove permission
+      between zone groups.
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zoneset create <zonesetName> 
+ 
+   Usage: 
+      zoneset create <zonesetName>
+         create an empty zone set named <zonesetName>. 
+
+   Examples: 
+      o Create an empty zone set named 'myZoneset'
+        sdmcli> zoneset create myZoneset 
+
+SDMCLI> zoneset deactivate
+Enter the zone manager password (Leave blank for no password): 
+Zoning successfully deactivated.
+
+SDMCLI> zoneset activate
+ERROR:  Additional input required
+zoneset activate 
+      The zoneset activate command removes any previously active zoning
+      in the domain and activates zoning based on the specified zone set.
+      NOTE:  If you activate a zone set and then make changes to the
+             zone set definition or the zone groups that the zone set
+             references, the changes will not take effect in the domain
+             unless the zoneset activate command is executed again for
+             that zone set. 
+   Syntax: 
+      zoneset activate <zonesetName> 
+ 
+   Usage: 
+      zoneset activate <zonesetName>
+         Activates zone set <zonesetName> after prompting the administrator
+         for the zone manager password. 
+
+   Examples: 
+      o Activate zoneset fred.
+        sdmcli> zoneset activate fred
+        Enter the zone manager password (Leave blank for no password):
+        Zoneset fred successfully activated. 
+
+SDMCLI> zoneset oasswd
+ERROR:  Additional input required
+zoneset 
+      The zoneset command allows for the creation and deletion of zone sets.
+      A zone set is a collection of zone group's pairs which have been given
+      permission to communicate with each other.
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zoneset [<command>] 
+
+Available commands for zoneset are:
+      activate   - Activate zoning in the domain using a zone set definition
+      add        - Add permission between two zone groups to a zone set
+      create     - Create a zone set
+      deactivate - Disable zoning for the domain (allows unrestricted access
+                   between all phys so all end devices will be able to access
+                   each other).
+      delete     - Delete a zone set
+      passwd     - Configures the zone manager password on all zoning
+                   expanders throughout the domain.
+      rename     - Rename a zone set
+      remove     - Remove permission between two zone groups from a zone set. 
+syntax error (oasswd)
+
+SDMCLI> zoneset passwd
+Enter the current zone manager password (Leave blank for no password): 
+Enter the new zone manager password (Leave blank for no password): 
+Re-enter the new zone manager password (Leave blank for no password): ***
+ERROR: New zone manager passwords do not match
+
+SDMCLI> zoneset rename
+ERROR:  Additional input required
+zoneset rename 
+      The zoneset rename command renames a zone set.
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zoneset rename <old_zoneset> <new_zoneset> 
+ 
+   Usage: 
+      zoneset rename <old_zoneset> <new_zoneset>
+         rename a zone set from <old_zoneset> to <new_zoneset> 
+
+   Examples: 
+      o Rename zone set 'myZoneset' to 'myNewZoneset'
+        sdmcli> zoneset rename myZoneset myNewZoneset 
+
+SDMCLI> zoneset remove
+ERROR:  Additional input required
+zoneset remove 
+      The zoneset remove command removes permission between two zone groups
+      from the specified zone set
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zoneset remove <zonesetName> <zoneGroupA> <zoneGroupB> 
+ 
+   Usage: 
+      zoneset remove <zonesetName> <zoneGroupA> <zoneGroupB>
+         Remove access permission for phys between <zoneGroupA> and <zoneGroupB> 
+
+   Examples: 
+      o Remove permission between phys in zone group 'initiators' and zone
+        group 'targets'.
+        sdmcli> zoneset remove myZoneset initiators targets
+      o Remove permission between phys within zone group 'accounting'
+        sdmcli> zoneset remove myZoneset accounting accounting 
+
+SDMCLI> alias create
+ERROR:  Additional input required
+alias create 
+      The alias create command creates aliases.  An alias is a user
+      defined name that is bound to a SAS Address.  Once created, the
+      alias can be used anywhere that a SAS Address would normally be used. 
+   Syntax: 
+      alias create <name> <sas_address> 
+ 
+   Usage: 
+      alias create <name> <sas_address>
+         Create an alias <name> for the SAS Address <sas_address>.
+         <name> is a string of up to 24 characters.  Valid characters
+         are A-Z, a-z, 0-9, #, -, _ 
+
+   Examples: 
+      o Create an alias
+        sdmcli> alias create mydisk 500605b000029b7f 
+
+SDMCLI> alias delete
+ERROR:  Additional input required
+alias delete 
+       The alias delete command deletes aliases. 
+   Syntax: 
+       alias delete single <name>
+       alias delete all [noconfirm] 
+ 
+   Usage: 
+       alias delete single <name>
+          Delete the alias <name>.
+       alias delete all [noconfirm]
+          Aliases will be deleted without displaying any confirmation 
+          prompt else a confirmation prompt will be displayed.
+ 
+
+   Examples: 
+      o Delete an alias
+        sdmcli> alias delete single mydisk
+      o Delete all aliases without confirmation
+        sdmcli> alias delete all noconfirm
+      o Delete all aliases with confirmation
+        sdmcli> alias delete all
+        Are you sure you want to delete all aliases (yes/no)?
+        no
+        Operation cancelled by user.
+ 
+
+SDMCLI> alias rename
+ERROR:  Additional input required
+
+                                 alias rename 
+      The 'alias rename' command renames an alias. 
+   Syntax: 
+      alias rename <old_name> <new_name>
+ 
+ 
+   Usage: 
+      alias rename <old name> <new name>
+         Rename the alias.
+         Rename alias from <old_name> to <new_name> 
+
+   Examples: 
+      o Rename an alias from 'switch' to 'mySwitch''
+        sdmcli> alias rename switch mySwitch
+ 
+
+SDMCLI> device disable
+ERROR:  Additional input required
+device disable 
+      The device disable command disables a specific expander PHY. 
+   Syntax: 
+      device (<sas_address> | <alias>):<phy> disable 
+ 
+   Usage: 
+      device (<sas_address> | <alias>):<phy> disable
+         Disables the expander PHY from transmitting and receiving. 
+
+   Examples: 
+      o Disable PHY 2 of the expander
+       sdmcli> device 500605b00002453f:2 disable
+       Enable phy number 2 (yes/no)? yes
+       PHY 2 was successfully disabled.
+ 
+
+SDMCLI> device enable
+ERROR:  Additional input required
+device enable 
+      The device enable command enables a specific expander PHY. 
+   Syntax: 
+      device (<sas_address> | <alias>):<phy> enable 
+ 
+   Usage: 
+      device (<sas_address> | <alias>):<phy> enable
+         Enables the expander PHY to transmit and receive. 
+
+   Examples: 
+      o Enable PHY 2 of the expander
+       sdmcli> device 500605b00002453f:2 enable
+       Enable phy number 2 (yes/no)? yes
+       PHY 2 was successfully enabled.
+ 
+
+SDMCLI> device reset
+ERROR:  Additional input required
+device reset 
+      The device reset command allows for resetting the entire
+      expander or switch, an individual PHY, or the PHY counters
+      on an expander or switch. 
+   Syntax: 
+      device (<sas_address> | <alias>)[:<phy>] reset [counters] [noconfirm] 
+ 
+   Usage: 
+      device (<sas_address> | <alias>) reset [noconfirm]
+         Resets the entire expander or switch.  If 'noconfirm' is
+         specified the reset will happen immediately without any
+         additional prompting.
+      device (<sas_address> | <alias>):<phy> reset
+         Resets the individual PHY on an expander or switch.
+         Before resetting, user confirmation is required.
+      device (<sas_address> | <alias>):<phy> reset counters
+         Clears the PHY's counters. 
+
+   Examples: 
+      o Reset the expander without a warning prompt
+        sdmcli> device 500605b0002453f reset noconfirm
+      o Reset the expander with a warning prompt
+        sdmcli> device 500605b0002453f reset
+        Note: SDM client's connection to the server will be lost 
+        when the server's host expander is reset
+        The client will have to log in again to reestablish the connection.
+        Reset Expander/Switch 500605b0002453f (yes/no)? yes
+      o Reset the phy with a warning prompt
+        sdmcli> device 500605b00002453f:6 reset
+        Reset Phy number 6 (yes/no)? yes
+        PHY reset successful.
+      o Clear PHY 21's counters
+        sdmcli> device 500605b000024534:21 reset counters 
+
+SDMCLI> device update
+ERROR:  Additional input required
+device update 
+      The device update command is used to install a new firmware
+      image on a device. 
+   Syntax: 
+      device (<sas_address> | <alias>) update <file> <tftp server ip> 
+ 
+   Usage: 
+      device (<sas_address> | <alias>) update <file> <tftp server ip>
+         Updates the firmware on the expander/switch where <file> is
+         the firmware image file and <tftp server ip> is the IP of TFTP
+         server on which firmware file is hosted.
+ 
+
+   Examples: 
+      o Update the expander's firmware version
+        sdmcli> device 500605b0002453f update sasx36fw.fw 192.168.18.4
+        Replace the current firmware version 200.7.55.0 with version 200.7.55.0 (yes or
+        no)? no
+        Firmware download aborted.
+ 
+
+SDMCLI> device rescan
+ERROR:  Additional input required
+device rescan 
+      The device rescan command is used to rescan the SES data 
+      for the expander. 
+   Syntax: 
+      device (<sas_address> | <alias>) rescan 
+ 
+   Usage: 
+      device (<sas_address> | <alias>) rescan 
+         Updates the SES data for the expander. 
+
+   Examples: 
+      o Update the expander's SES data
+        sdmcli> device 500605b0002453f rescan
+ 
+
+SDMCLI> device ip
+ERROR:  Additional input required
+device ip 
+      The device ip command is used to configure IP address
+      for the switch. 
+   Syntax: 
+      device (<sas_address> | <alias>) ip 
+ 
+   Usage: 
+      device (<sas_address> | <alias>) ip (dhcp | static <ip address> <mask> <gateway>) 
+         Configure IP address for the switch. 
+
+   Examples: 
+       Configure IP address for the switch for DHCP.
+        sdmcli> device 500605b0002453f ip dhcp
+       Configure IP address for the switch for Static Ip.
+        sdmcli> device 500605b0002453f ip static 172.21.25.204 255.255.255.0 172.21.25.1.
+ 
+
+SDMCLI> device date
+ERROR:  Additional input required
+device date 
+      The device date command sets date and time
+      of the switch/expander 
+   Syntax: 
+      device (<sas_address> | <alias>) date <DAY YYYY-MM-DDThh:mm:ss> 
+
+   Examples: 
+      o Sets date and time.
+        sdmcli> device 500605b00002453f date WED 2010-11-12T13:14:15
+        sdmcli> device switch date WED 2010-11-12T13:14:15 
+ 
+
+SDMCLI> device nmp
+ERROR: nmp does not appear to be a valid SAS Address or alias
+
+SDMCLI> device snmp
+ERROR:  Additional input required
+device snmp 
+      The device snmp command enables user to set various SNMP 
+      configuration values. Only Switch is supported as device type for
+      this command. 
+  
+   Syntax: 
+      device (<sas_address> | <alias>) snmp agentsecurity authsecflag
+      device (<sas_address> | <alias>) snmp agentsecurity privsecflag
+      device (<sas_address> | <alias>) snmp agentsecurity username
+      device (<sas_address> | <alias>) snmp agentsecurity authpass
+      device (<sas_address> | <alias>) snmp agentsecurity privpass
+      device (<sas_address> | <alias>) snmp systemmib contactstring 
+      device (<sas_address> | <alias>) snmp systemmib namestring 
+      device (<sas_address> | <alias>) snmp systemmib locationstring 
+ 
+
+   Examples: 
+      o Enables user to set the SNMP configuration values of switch.
+        In case authorization is required,user will be prompted to
+        enter username and password. Example for setting agent security
+        username applies for other commands also.
+        sdmcli> device 500605b00002453f snmp agentsecurity username
+        Enter Username:Bob
+        Enter New User Name:John
+        Re-enter New User Name:John
+        New User Name set successfully.
+        sdmcli> device 500605b00002453f snmp agentsecurity authsecflag
+        sdmcli> device myswitch snmp agentsecurity privsecflag
+        sdmcli> device 500605b00002453f snmp agentsecurity authpass
+        sdmcli> device 500605b00002453f snmp agentsecurity privpass
+        sdmcli> device myswitch snmp systemmib contactstring 
+        sdmcli> device 500605b00002453f snmp systemmib namestring 
+        SDMCLI> device 500605b00002453f snmp systemmib locationstring 
+ 
+
+SDMCLI> device monitor 
+ERROR:  Additional input required
+device monitor 
+       The device monitor command allows user to select available performance
+       and error monitor configuration set as well as to change time base.
+       Configuration settings are changed as per configuration set number
+       provided in command. To change timebase, user needs to provide 
+       desired timebase in command.
+ 
+   Syntax: 
+       device (<sas_address> | <alias>) monitor selectconfigset (configuration set number) 
+       device (<sas_address> | <alias>) monitor changetimebase (timebase) 
+ 
+
+   Examples: 
+      o Enables user to set the device monitor settings .
+        sdmcli> device 500605b00002453f monitor selectconfigset 4 
+        sdmcli> device switch monitor changetimebase 10 
+ 
+
+SDMCLI> device threshold
+ERROR:  Additional input required
+threshold 
+      The threshold command enables user to get or set the threshold 
+      values of a SES element of the switch/expander. The threshold values
+      passed through this command may or may not be applied depending 
+      on the device server.
+ 
+   Syntax: 
+      device (<sas_address> | <alias>) threshold <element id>
+      <threshold value High Critical> <threshold value High Warning>
+      <threshold value Low Warning> <threshold value LOW Critical>
+      show device (<sas_address> | <alias>) threshold [<element type>] 
+ 
+
+   Examples: 
+      o Enables user to set the threshold values of a SES element of 
+        switch/expander.
+        sdmcli> device 500605b00002453f threshold 01 02 03 04 05
+        sdmcli> device switch threshold 01 02 03 04 05
+        sdmcli> show device 500605b00002453f threshold 04 
+        sdmcli> show device switch threshold 04 
+        sdmcli> show device switch threshold 
+ 
+
+SDMCLI> help show zoneset
+show zoneset 
+      The show zoneset command displays zone Set definitions 
+   Syntax: 
+      show zoneset [active|data <name>] 
+ 
+   Usage: 
+      show zoneset
+         Displays a list of defined zone sets.
+      show zoneset data <zonesetName>
+         Displays a detailed description of that zone set
+      show zoneset active
+         Display a detailed description of the active zoning currently in use.
+
+         SDMCLI> help show zonegroup
+show zonegroup 
+      The show zonegroup command displays Zone Group definitions 
+   Syntax: 
+      show zonegroup [<zoneGroupName>] 
+ 
+   Usage: 
+      show zonegroup [<zoneGroupName>]
+         Displays a list of defined zone groups.  If <zoneGroupName> is
+         specified a detailed description of that zone group is displayed. 
+
+SDMCLI> help show device   
+show device 
+      The show device command displays details about end devices
+      and expanders in the SAS domain. 
+   Syntax: 
+      show device [<sas_address> | <alias>] [command] 
+ 
+   Usage: 
+      show device [<sas_address> | <alias>] [command]
+         Displays detailed information pertinent to a particular device if
+         <sas_address> or <alias> is supplied.  Otherwise this command will
+         display a subset of this information, in a tabular format, for all
+         devices discovered throughout the domain. And if [command] parameter
+         is supplied then appropriate action will be performed based on the 
+         command.
+ 
+
+Available commands for show device are:
+      date           - Displays current date and time of a switch/expander.
+      log            - Displays device specific logs.
+      threshold      - Displays current threshold values of various SES
+                       elements present in the device.
+      snmp           - Displays the SNMP configuration of switch.
+      monitor        - Displays performance monitor values of the device.
+ 
+
+SDMCLI> help show domain
+show domain 
+      The show domain command displays information about each domain overlay 
+      and it's associated physical domain discovered and available to manage. 
+   Syntax: 
+      show domain [command] 
+
+Available commands for show domain are:
+      access     - Show details about all domains accessible by the Daemon
+      conflicts  - Identifies instances where devices are referenced in
+                   multiple domain overlays. 
+
+SDMCLI> help show alias
+show alias 
+      The show alias command displays details about aliases in the domain 
+   Syntax: 
+      show alias [<alias_name>] 
+ 
+   Usage: 
+      show alias [<alias_name>]
+         Displays aliases that are defined in the domain.  If <alias_name>
+         is omitted, all defined aliases are displayed. 
+
+   Examples: 
+      o Display all aliases in the domain
+        sdmcli> show alias
+      o Display information about just alias 'myalias'
+        sdmcli> show alias myalias 
+
+SDMCLI> help show phy
+show phy 
+      The show phy command displays details about phys in the domain 
+   Syntax: 
+      show phy [(<sas_address> | <alias>)[:<phy>]]
+ 
+ 
+   Usage: 
+      show phy
+         Displays all PHYs in the domain
+      show phy (<sas_address>|<alias>)
+         Displays all PHYs on a device if <sas_address> or <alias>
+         is supplied
+      show phy <sas_address>|<alias>:<phy>
+         Displays detailed information about a particular PHY <phy>
+         if <sas_address> or <alias> is supplied
+ 
+
+   Examples: 
+      o Display information for all phys discovered in the domain
+        sdmcli> show phy
+      o Display information for all phys on an expander
+        sdmcli> show phy 500605b000029b7f
+      o Display information for phy 8 on an expander
+        sdmcli> show phy 500605b000029b7f:8
+      o Display information for phy 8 on an expander with alias 'myalias'
+        sdmcli> show phy myalias:8 

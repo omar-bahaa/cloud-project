@@ -1,0 +1,227 @@
+show zonegroup
+Zone Groups
+-----------
+ZG_ServerBlade_01
+ZG_ServerBlade_09
+ZG_ServerBlade_02
+ZG_ServerBlade_10
+ZG_ServerBlade_03
+ZG_ServerBlade_11
+ZG_ServerBlade_04
+ZG_ServerBlade_12
+ZG_ServerBlade_05
+ZG_ServerBlade_13
+ZG_ServerBlade_06
+ZG_ServerBlade_14
+ZG_ServerBlade_17
+ZG_ServerBlade_18
+ZG_HDD_709
+ZG_HDD_708
+ZG_HDD_707
+ZG_HDD_706
+ZG_HDD_705
+ZG_HDD_704
+ZG_HDD_703
+ZG_HDD_702
+ZG_HDD_701
+ZG_HDD_700
+ZG_HDD_1509
+ZG_HDD_1508
+ZG_HDD_1507
+ZG_HDD_1506
+newZG
+ZG_HDD_RAID_1500_to_1505
+newzg
+
+SDMCLI> show zonegroup newzg
+Zone Group
+    Member Alias/SAS Address: Phy List
+--------------------------------------
+newzg:
+SX980_15        : 12
+SAS_ConnectionB*: 10 11
+SX980_07        : 10
+
+SDMCLI> help zoneset
+zoneset 
+      The zoneset command allows for the creation and deletion of zone sets.
+      A zone set is a collection of zone group's pairs which have been given
+      permission to communicate with each other.
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zoneset [<command>] 
+
+Available commands for zoneset are:
+      activate   - Activate zoning in the domain using a zone set definition
+      add        - Add permission between two zone groups to a zone set
+      create     - Create a zone set
+      deactivate - Disable zoning for the domain (allows unrestricted access
+                   between all phys so all end devices will be able to access
+                   each other).
+      delete     - Delete a zone set
+      passwd     - Configures the zone manager password on all zoning
+                   expanders throughout the domain.
+      rename     - Rename a zone set
+      remove     - Remove permission between two zone groups from a zone set. 
+
+SDMCLI> show zonegroup newZG
+Zone Group
+    Member Alias/SAS Address: Phy List
+--------------------------------------
+newZG:
+SX980_07        : 00 01
+
+SDMCLI> zoneset add help
+syntax error (unexpected end of input)
+ERROR:  Additional input required
+zoneset add 
+      The zoneset add command adds permission between two zone groups
+      to the specified zone set
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain.
+      NOTE:  The phys within a zone group are not granted permission to
+             communicate with each other by default.  If this is desired
+             use this command specifying the same zone group for both
+             <zoneGroupA> and <zoneGroupB> 
+   Syntax: 
+      zoneset add <zonesetName> <zoneGroupA> <zoneGroupB> 
+ 
+   Usage: 
+      zoneset add <zonesetName> <zoneGroupA> <zoneGroupB>
+         Add permission for phys in <zoneGroupA> to access phys in <zoneGroupB>
+         and vise-versa. 
+
+   Examples: 
+      o Add permission between phys in zone group 'initiators' and zone
+        group 'targets'.
+        sdmcli> zoneset add myZoneset initiators targets
+      o Add permission between phys within zone group 'accounting'
+        sdmcli> zoneset add myZoneset accounting accounting 
+
+SDMCLI> show zoneset
+ZoneSets
+--------
+Manual_Zone_Set
+
+SDMCLI> create zoneset newZS
+syntax error (create)
+
+SDMCLI> help create zoneset      
+help 
+      The help command provides the documentation for all of the commands
+      available in the CLI. 
+   Syntax: 
+      help [<command>] 
+ 
+   Usage: 
+      help [<command>]
+         Displays detailed help for a specific command if [<command>] is
+         provided, otherwise it displays a list of all available commands. 
+
+   Examples: 
+      o To get a list of all the available SHOW commands type 'help show'
+        at the command prompt.
+      o To get detailed help for the 'show domain device' command, type
+        'help show domain device' at the command prompt. 
+
+Available commands for help are:
+      alias     - Allows to create, delete and rename aliases.
+      device    - Configures individual device (expander or switch)
+                  within the domain.
+      domain    - Selects the domain on which the CLI is focused.
+      exit      - Logs out and exits the CLI.
+      logout    - Logs out and exits the CLI.
+      passwd    - Changes the password for an account.
+      quit      - Logs out and exits the CLI.
+      show      - Display information about the connected SAS domain,
+                  devices, phys, aliases and zoning.
+      zonegroup - Allows for the creation and deletion of zonegroups.
+      zoneset   - Allows for the creation, deletion and activation of zonesets.
+      config    - Allowing the backing up or restoring of SDM-Configuration,
+                  or modifying discovery settings. 
+syntax error (create)
+
+SDMCLI> zoneset create newzoneset
+Zone set successfully created.
+
+SDMCLI> show zoneset
+ZoneSets
+--------
+Manual_Zone_Set
+newzoneset
+
+SDMCLI> show zoneset data newzoneset
+Zone Set
+    Zone Group: Permitted Zone Group List
+        Member Alias/SAS Address: Phy List
+------------------------------------------
+newzoneset*:
+
+
+SDMCLI> zoneset add newzg newzg
+syntax error (unexpected end of input)
+ERROR:  Additional input required
+zoneset add 
+      The zoneset add command adds permission between two zone groups
+      to the specified zone set
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain.
+      NOTE:  The phys within a zone group are not granted permission to
+             communicate with each other by default.  If this is desired
+             use this command specifying the same zone group for both
+             <zoneGroupA> and <zoneGroupB> 
+   Syntax: 
+      zoneset add <zonesetName> <zoneGroupA> <zoneGroupB> 
+ 
+   Usage: 
+      zoneset add <zonesetName> <zoneGroupA> <zoneGroupB>
+         Add permission for phys in <zoneGroupA> to access phys in <zoneGroupB>
+         and vise-versa. 
+
+   Examples: 
+      o Add permission between phys in zone group 'initiators' and zone
+        group 'targets'.
+        sdmcli> zoneset add myZoneset initiators targets
+      o Add permission between phys within zone group 'accounting'
+        sdmcli> zoneset add myZoneset accounting accounting 
+
+SDMCLI> zoneset newzoneset add newzg newzg
+ERROR:  Additional input required
+zoneset 
+      The zoneset command allows for the creation and deletion of zone sets.
+      A zone set is a collection of zone group's pairs which have been given
+      permission to communicate with each other.
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zoneset [<command>] 
+
+Available commands for zoneset are:
+      activate   - Activate zoning in the domain using a zone set definition
+      add        - Add permission between two zone groups to a zone set
+      create     - Create a zone set
+      deactivate - Disable zoning for the domain (allows unrestricted access
+                   between all phys so all end devices will be able to access
+                   each other).
+      delete     - Delete a zone set
+      passwd     - Configures the zone manager password on all zoning
+                   expanders throughout the domain.
+      rename     - Rename a zone set
+      remove     - Remove permission between two zone groups from a zone set. 
+syntax error (newzoneset)
+
+SDMCLI> zoneset add newzoneset newzg newzg    
+Zone set successfully modified.
+
+SDMCLI> show zoneset data newzoneset
+Zone Set
+    Zone Group: Permitted Zone Group List
+        Member Alias/SAS Address: Phy List
+------------------------------------------
+newzoneset*:
+    newzg:  newzg
+SX980_15        : 12
+SAS_ConnectionB*: 10 11
+SX980_07        : 10
+

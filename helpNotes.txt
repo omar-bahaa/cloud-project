@@ -1,0 +1,198 @@
+SDMCLI> help domain
+domain 
+      The domain command manages the domain overlays and their associated physical domains 
+   Syntax: 
+      domain <command> 
+
+Available commands for domain are:
+      focus     - Focuses the CLI on a specified domain
+ 
+
+SDMCLI> help exit
+exit 
+      The exit command exits the command line interface. 
+   Syntax: 
+      exit 
+
+SDMCLI> help logout
+logout 
+      The logout command exits the command line interface. 
+   Syntax: 
+      logout 
+
+
+SDMCLI> help passwd
+passwd 
+      The passwd command changes the 'admin' and 'user' account passwords.
+
+      NOTE:  Regardless of which account password is being changed, the
+             current 'admin' password will need to be supplied first 
+   Syntax: 
+      passwd (admin | user) 
+
+   Examples: 
+      o Change the password for the 'user' account
+        sdmcli> passwd user
+        Please enter the current 'admin' password:
+        Please enter the new password for user:
+        Please re-enter the new password for user:
+        Changing password for user
+        Password changed. 
+
+SDMCLI> help quit
+quit 
+      The quit command exits the command line interface. 
+   Syntax: 
+      quit
+ 
+
+SDMCLI> help show
+show 
+      The show command displays information about the domain, its
+      configuration, zoning, and details about devices in the SAS domain. 
+   Syntax: 
+      show <command> 
+
+Available commands for show are:
+      alias     - Show details about all defined aliases
+      device    - Show details about devices in the domain
+      domain    - Show details about all domains actively being managed
+      phy       - Show details about the phys in the domain
+      version   - Show details about the CLI and daemon versions
+      zonegroup - Show details about defined Zone Groups
+      zoneset   - Show details about defined Zone Sets
+      log       - Show details about event log
+      invalidt2t - Show details about invalid table to table links.
+      discoveryconfig - Show details about discovery settings.
+ 
+
+SDMCLI> help config
+config 
+      The config command is used for either backup or restore of current state .
+      such as aliases, zoning details about devices in the SAS domain. 
+   Syntax: 
+      config <command> 
+
+Available commands for config are:
+      backup     - Backup the current SDM database in new .bin file.
+      restore    - Restore the backed up database to the current domain.
+      discovery  - Configures discovery settings. 
+ 
+
+SDMCLI> help zonegroup
+zonegroup 
+      The zonegroup command allows for the creation and deletion of zone groups.
+      A zone group is a collection of phys on one or more SAS zoning expanders
+      (like LSI SAS switches).  Zone groups can then be given permission to
+      communicate with phys in other zone groups (including permission to
+      phys within the zone group itself as such permission is not granted by
+      default) by adding the zone groups to a zone set.
+      NOTE:  Making changes to a zone group will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zonegroup [<command>] 
+
+Available commands for zonegroup are:
+      add      - Add a domain phy (a phy on a zoning expander) to an existing
+                 zone group
+      create   - Create a zone group
+      delete   - Delete a zone group
+      rename   - Rename a zone group
+      remove   - Remove a domain phy (a phy on a zoning expander) from an
+                 existing zone group. 
+
+SDMCLI> help zoneset
+zoneset 
+      The zoneset command allows for the creation and deletion of zone sets.
+      A zone set is a collection of zone group's pairs which have been given
+      permission to communicate with each other.
+      NOTE:  Making changes to a zone set will not affect active zoning.
+             Only when a zone set is activated are changes made to the domain. 
+   Syntax: 
+      zoneset [<command>] 
+
+Available commands for zoneset are:
+      activate   - Activate zoning in the domain using a zone set definition
+      add        - Add permission between two zone groups to a zone set
+      create     - Create a zone set
+      deactivate - Disable zoning for the domain (allows unrestricted access
+                   between all phys so all end devices will be able to access
+                   each other).
+      delete     - Delete a zone set
+      passwd     - Configures the zone manager password on all zoning
+                   expanders throughout the domain.
+      rename     - Rename a zone set
+      remove     - Remove permission between two zone groups from a zone set. 
+
+SDMCLI> help alias
+alias 
+      The alias command allows for the creation and deletion of aliases.
+      An alias is a user defined name that is bound to a SAS Address.  Once
+      created, the alias can be used anywhere that a SAS Address would normally
+      be used. 
+   Syntax: 
+      alias [<command>] 
+
+Available commands for alias are:
+      create   - Create an alias (i.e. create a user defined name for a
+                 SAS Address)
+      delete   - Delete one or more aliases 
+      rename   - Rename the alias
+ 
+
+SDMCLI> help device
+device 
+      The device command configures individual expanders or switches
+      within the domain. 
+   Syntax: 
+      device (<sas_address> | <alias>)[:<phy>] [command] 
+
+Available commands for device are:
+      disable        - Disable a specific expander PHY
+      enable         - Enable a specific expander PHY
+      reset          - Resets a device, PHY, or PHY counters
+      update         - Installs a new firmware image on a device
+      rescan         - Updates the SES data for the device
+      ip             - Updates the IP address of a switch
+      date           - Updates the date and time of a switch/expander.
+      snmp           - Updates the SNMP values.
+      monitor        - Updates performance monitor set and time base.
+      threshold      - Updates the threshold values of a switch/expander. 
+
+
+
+SDMCLI> help
+help 
+      The help command provides the documentation for all of the commands
+      available in the CLI. 
+   Syntax: 
+      help [<command>] 
+ 
+   Usage: 
+      help [<command>]
+         Displays detailed help for a specific command if [<command>] is
+         provided, otherwise it displays a list of all available commands. 
+
+   Examples: 
+      o To get a list of all the available SHOW commands type 'help show'
+        at the command prompt.
+      o To get detailed help for the 'show domain device' command, type
+        'help show domain device' at the command prompt. 
+
+Available commands for help are:
+      alias     - Allows to create, delete and rename aliases.
+      device    - Configures individual device (expander or switch)
+                  within the domain.
+      domain    - Selects the domain on which the CLI is focused.
+      exit      - Logs out and exits the CLI.
+      logout    - Logs out and exits the CLI.
+      passwd    - Changes the password for an account.
+      quit      - Logs out and exits the CLI.
+      show      - Display information about the connected SAS domain,
+                  devices, phys, aliases and zoning.
+      zonegroup - Allows for the creation and deletion of zonegroups.
+      zoneset   - Allows for the creation, deletion and activation of zonesets.
+      config    - Allowing the backing up or restoring of SDM-Configuration,
+                  or modifying discovery settings. 
+
+SDMCLI> 
