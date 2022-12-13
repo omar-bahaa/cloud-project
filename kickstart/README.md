@@ -16,7 +16,7 @@
 ```
 
 2. make a file to work with the startup because there is no system yet and the script works in the kernel mode
- that is why there are servers and tools not initiated using init.d
+ that is why there are servers and tools not initiated using <code> init.d </code>
  
 3. Putting the opennebula automation script in the srwr.sh service on the init.d 
 4. The script <code> srwr.sh </code> is called from the network to be edited (Front.txt and node.txt) and integrated with the gui
