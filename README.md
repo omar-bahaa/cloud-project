@@ -27,7 +27,7 @@ machines configured differently. <br>
 3. Opennebula
 4. Network scripting
 
-### GUI 
+### 1. GUI:
 
 The GUI done using QT designer for geometry and Python + PYQT for control. 
 
