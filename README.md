@@ -33,7 +33,7 @@ machines configured differently. <br>
 
    Period: 2 months average for initialization + modifications
 
-      #### Content
+   #### Content
       1. The GUI contain 3 version so far.
       2. Each version contains a Readme file to explain how to run.
       3. The result of the GUI stored in 3 different json files. 
