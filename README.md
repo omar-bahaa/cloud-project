@@ -29,12 +29,12 @@ machines configured differently. <br>
 
 ### 1. GUI:
 
-The GUI done using QT designer for geometry and Python + PYQT for control. 
+   The GUI done using QT designer for geometry and Python + PYQT for control. 
 
-Period: 2 months average for initialization + modifications
+   Period: 2 months average for initialization + modifications
 
-#### Content
-   1. The GUI contain 3 version so far.
-   2. Each version contains a Readme file to explain how to run.
-   3. The result of the GUI stored in 3 different json files. 
- 
+      #### Content
+      1. The GUI contain 3 version so far.
+      2. Each version contains a Readme file to explain how to run.
+      3. The result of the GUI stored in 3 different json files. 
+
