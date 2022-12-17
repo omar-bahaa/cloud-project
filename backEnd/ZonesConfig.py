@@ -2,6 +2,7 @@ from sas import SASConigurator
 from ZonesManager import zoneSetManager, zonegroupManager
 
 class ZoneGroup():
+    
     def __init__(self,zonegroupName):
         self.zonegroupName=zonegroupName
         self.captureCommandsList=[]
