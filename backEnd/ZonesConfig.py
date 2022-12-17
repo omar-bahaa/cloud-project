@@ -1,16 +1,28 @@
 from sas import SASConigurator
-from ZonesManager import zoneSetManager, zonegroupManager
 
 class ZoneGroup():
-    
+    listOfZonegrouObjects=[]
+    allCaptureCommandsList=[]
     def __init__(self,zonegroupName):
         self.zonegroupName=zonegroupName
         self.captureCommandsList=[]
         self.command = f"zonegroup create {self.zonegroupName}"
         SASConigurator.send_command(command=self.command) 
         self.captureCommandsList.append(self.command)
+        ZoneGroup.allCaptureCommandsList.append(self.command)
         self.parentExpanderToPhysPorts={} #expaneder is key and each value is a set of phys port numbers to which im onnecting my device to that parent expander
-        zonegroupManager.listOfZonegrouObjects.append(zonegroupName)
+        ZoneGroup.listOfZonegrouObjects.append(zonegroupName)
+    @classmethod
+    def deleteAllZoneGroups(cls):
+        command = "zonegroup delete all noconfirm"
+        SASConigurator.send_command(command) 
+        ZoneGroup.allCaptureCommandsList.append(command)
+        for zonegroup in ZoneGroup.listOfZonegrouObjects:
+            del zonegroup
+        ZoneGroup.listOfZonegrouObjects=[]
+    
+        return 0 
+
     def addToZoneGroup(self,sasAddress,phyNumberList):
         for phyNumber in phyNumberList:
             self.parentExpanderToPhysPorts[sasAddress].add(phyNumber)
@@ -19,12 +31,14 @@ class ZoneGroup():
             
             SASConigurator.send_command(command=self.command) 
             self.captureCommandsList.append(self.command)
+            ZoneGroup.allCaptureCommandsList.append(self.command)
 
         return 0
     def _deleteZoneGroup(self):
         self.command = f"zonegroup delete single {self.zonegroupName}"
         SASConigurator.send_command(command=self.command)
         self.captureCommandsList.append(self.command)
+        ZoneGroup.allCaptureCommandsList.append(self.command)
         return 0      
     def __del__(self):
         self._deleteZoneGroup()
@@ -36,6 +50,7 @@ class ZoneGroup():
         self.zonegroupName=newZoneGroupName
         SASConigurator.send_command(command=self.command) 
         self.captureCommandsList.append(self.command)
+        ZoneGroup.allCaptureCommandsList.append(self.command)
         return 0
 
     def removeDeviceFromZonegroup(self,sasAddress,phyNumberList):
@@ -44,11 +59,15 @@ class ZoneGroup():
             self.command = f"zonegroup remove {self.zonegroupName} {sasAddress}:{phyNumber}"
             SASConigurator.send_command(command=self.command) 
             self.captureCommandsList.append(self.command)
+            ZoneGroup.allCaptureCommandsList.append(self.command)
         return 0
 
 
 
 class ZoneSet():
+    activeZoneset=""
+    allZoneset=set()
+    allCaptureCommandsList=[]
     
     def __init__(self,zonesetName):
         self.zonesetName=zonesetName
@@ -56,17 +75,41 @@ class ZoneSet():
         self.command = f"zoneset create {zonesetName}"
         SASConigurator.send_command(command=self.command)
         self.captureCommandsList.apend(self.command) 
+        ZoneSet.allCaptureCommandsList.append(self.command)
+        
         
         self.captureCommandsList=[]
         self.zonegroupPairsSetofSets=set()
         
-        zoneSetManager.allZoneset[zonesetName]= self
+        ZoneSet.allZoneset.add(self)
 
+    @classmethod   
+    def deactivateZoneset(cls):
         
+        command = "zoneset deactivate"
+        SASConigurator.send_command(command) 
+        ZoneSet.allCaptureCommandsList.append(command)
+
+        ZoneSet.activeZoneset=""
+        
+        return 0   
+    @classmethod
+    def activateZoneset(self,zonesetName):
+        if ZoneSet.activeZoneset!="":
+            self.deactivateZoneset()
+       
+        self.command = f"zoneset activate {zonesetName}"
+        SASConigurator.send_command(command=self.command) 
+        ZoneSet.allCaptureCommandsList.append(self.command)
+        
+        ZoneSet.activeZoneset=self.zonesetName    
+        
+        return 0   
     def addZoneGroupPairToZoneSet(self,zoneGroupA,zoneGroupB):
         self.command = f"zoneset add {self.zonesetName} {zoneGroupA} {zoneGroupB}"
         SASConigurator.send_command(command=self.command) 
         self.captureCommandsList.append(self.command)
+        ZoneSet.allCaptureCommandsList.append(self.command)
 
         self.zonegroupPairsSetofSets.add(frozenset(zoneGroupA,zoneGroupB))
         
@@ -80,6 +123,7 @@ class ZoneSet():
         self.command = f"zonegroup rename {oldZoneSetName} {newZonesetName}"
         SASConigurator.send_command(command=self.command) 
         self.captureCommandsList.append(self.command)
+        ZoneSet.allCaptureCommandsList.append(self.command)
         
         return 0
 
@@ -88,6 +132,7 @@ class ZoneSet():
         self.command = f"zoneset remove {self.zonesetName} {zoneGroupA} {zoneGroupB}"
         SASConigurator.send_command(command=self.command) 
         self.captureCommandsList.append(self.command)
+        ZoneSet.allCaptureCommandsList.append(self.command)
 
         self.zonegroupPairsSetofSets.remove(frozenset(zoneGroupA,zoneGroupB))
 
