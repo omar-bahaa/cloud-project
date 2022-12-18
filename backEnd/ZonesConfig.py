@@ -1,4 +1,7 @@
 from sas import SASConigurator
+from ZonesViewr import Viewer
+import json
+import re
 
 class ZoneGroup():
     listOfZonegrouObjects=[]
@@ -20,6 +23,24 @@ class ZoneGroup():
         for zonegroup in ZoneGroup.listOfZonegrouObjects:
             del zonegroup
         ZoneGroup.listOfZonegrouObjects=[]
+    def get_zonegr(self):
+        viewer=Viewer()
+        output_names = viewer.showZonegroup()
+        ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", output_names, flags=re.S)
+        ZGs_list = ZGs[0].strip().split("\n") # list of all zonegroup names
+        
+        for zonegr in range(len(ZGs_list)):
+            output_zgs=viewer.showZonegroupData(ZGs_list[zonegr])
+            exphy = re.findall(r"^.*?-{8,}\n"+ZGs_list[zonegr]+r":\n(.*?)$", output_zgs, flags=re.S)
+            exphy = exphy[0].strip().split("\n")
+            for i in range(len(exphy)):
+                exphy[i] = exphy[i].strip().split(":")
+                exphy[i][0], exphy[i][1] = exphy[i][0].strip(), exphy[i][1].strip().split()
+            ZGs_list[zonegr] = [ZGs_list[zonegr], exphy]
+        self.ZG_list = ZGs_list
+        return self.ZGs_list # [[zonegroup_name, [exp,[phys]]]]
+
+    
     
         return 0 
 
@@ -135,9 +156,28 @@ class ZoneSet():
         ZoneSet.allCaptureCommandsList.append(self.command)
 
         self.zonegroupPairsSetofSets.remove(frozenset(zoneGroupA,zoneGroupB))
-
         return 0
 
+    def get_zones(self):
+        viewer=Viewer()
+        zsnames = viewer.showZoneset()    
+        ZSs = re.findall(r"^.*?-{8,}\n(.*?)$", zsnames, flags=re.S)
+        ZSs_list = ZSs[0].strip().split("\n")
+        
+        for zones in range(len(ZSs_list)):
+            mappings = viewer.showZonesetData(ZSs_list[zones])
+            mappings = re.findall(r"^.*?-{8,}\n"+ZSs_list[zones]+r".*:\n(.*?)$", mappings, flags=re.S)
+            mappings = mappings[0].strip().split('\n')
+            zl = set()
+            for map in range(len(mappings)):
+                x = mappings[map].strip().split(":")
+                if x[0] in self.ZG_list:
+                    zg2_list = x[1].strip().split(" ")
+                    for zg2 in zg2_list:
+                        zl.add(frozenset([x[0], zg2]))
+            ZSs_list[zones] = [ZSs_list[zones], zl]
+        self.ZS_list = ZSs_list
+        return self.ZSs_list # [[zoneset_name, {{zg1, zg2}}]]
 
 class Domain():
     def __init__(self):
