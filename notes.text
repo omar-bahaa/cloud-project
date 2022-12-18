@@ -524,3 +524,13 @@ status = 0
 status_tag = COMMAND COMPLETED
 
 MMB Firmware Version 6.00
+
+
+
+# Kickstart confs ll most2bl:
+
+1. langauge
+2. timezone
+3. bootloader
+4. 3lat tol bn3ml new partitions
+5. raid

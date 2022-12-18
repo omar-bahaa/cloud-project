@@ -1,5 +1,7 @@
 import paramiko
 import json
+import re
+from backEnd.ZonesConfig import *
 
 class ConnectionServer():
     def __init__(self) -> None:
@@ -160,3 +162,18 @@ class SASConigurator():
                 for zg1, zg2 in mapping:
                     self.send_command(f"zoneset add {zs[0]} {zg1} {zg2}")
         return
+
+    
+    def readZoneGroupsFromJson(self, json_filepath):
+        with open(json_filepath, "rb") as f:
+            conf = json.load(f)
+        ZGs=conf["ZGs"]
+        AllZoneGroups=ZGs["ZoneGroups"]
+        for zg in AllZoneGroups.keys():
+            name = AllZoneGroups[zg]["ZGName"]
+            exphys = AllZoneGroups[zg]["Exphys"]
+            zonegroup = ZoneGroup(name)
+            for expander, phys in exphys.items():
+                zonegroup.addToZoneGroup(expander, phys)            
+        return 
+
