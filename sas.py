@@ -2,6 +2,7 @@ import paramiko
 import json
 import re
 from backEnd.ZonesConfig import *
+from backEnd.ZonesViewr import *
 
 class ConnectionServer():
     def __init__(self) -> None:
@@ -69,7 +70,10 @@ class SSHConnector(object):
         super.__del__()
 
 class SASConigurator():
+    allcaptureCommandsList=[]
+    
     def __init__(self) -> None:
+        self.captureCommandsList = []
         super().__init__()
         # self.load_config()
     
@@ -102,6 +106,17 @@ class SASConigurator():
             buff += resp
         return buff
     
+    def initalize_connection(self, channel):
+        self.connect_withchannel(channel)
+        self.invoke_shell()
+    
+    @classmethod
+    def sendAndCaptureCommand(cls, self, command):
+        output = self.send_command(command+"\r")
+        cls.allCaptureCommandsList.append(command)  # will this variable work on differenct classes with same variable name?
+        self.captureCommandsList.append(command)
+        return output
+    
     def close_connection(self):
         self.SSHClient.close()
     
@@ -110,30 +125,36 @@ class SASConigurator():
     
     def get_shell(self):
         return self.shell
-    
+
+
+class Sas(ZoneGroup, ZoneSet, Viewer, SASConigurator):
     def get_zonegr(self):
-        output_names = self.send_command("show zonegr\r")        
+        output_names = self.showZonegroup()
         ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", output_names, flags=re.S)
         ZGs_list = ZGs[0].strip().split("\n") # list of all zonegroup names
-        
         for zonegr in range(len(ZGs_list)):
-            output_zgs = self.send_command(f"show zonegr {ZGs_list[zonegr]}") # what if zgr is empty??
+            output_zgs = self.showZonegroupData(ZGs_list[zonegr])
+            zonegroup = ZoneGroup(ZGs_list[zonegr])
             exphy = re.findall(r"^.*?-{8,}\n"+ZGs_list[zonegr]+r":\n(.*?)$", output_zgs, flags=re.S)
             exphy = exphy[0].strip().split("\n")
             for i in range(len(exphy)):
                 exphy[i] = exphy[i].strip().split(":")
-                exphy[i][0], exphy[i][1] = exphy[i][0].strip(), exphy[i][1].strip().split()
-            ZGs_list[zonegr] = [ZGs_list[zonegr], exphy]
-        self.ZG_list = ZGs_list
-        return self.ZGs_list # [[zonegroup_name, [exp,[phys]]]]
-
+                expander, phys = exphy[i][0].strip(), exphy[i][1].strip().split()
+                zonegroup.addToZoneGroup({expander: phys})
+                # exphy[i][0] = expander
+                # exphy[i][1] = phys
+            # ZGs_list[zonegr] = [ZGs_list[zonegr], exphy]
+        # self.ZG_list = ZGs_list
+        # return self.ZGs_list # [[zonegroup_name, [exp,[phys]]]]
+        return
+    
     def get_zones(self):
-        zsnames = self.send_command("show zones\r")
+        zsnames = self.showZoneset()
         ZSs = re.findall(r"^.*?-{8,}\n(.*?)$", zsnames, flags=re.S)
         ZSs_list = ZSs[0].strip().split("\n")
         
         for zones in range(len(ZSs_list)):
-            mappings = self.send_command(f"show zones data {ZSs_list[zones]}\r")
+            mappings = self.showZonesetData(ZSs_list[zones])
             mappings = re.findall(r"^.*?-{8,}\n"+ZSs_list[zones]+r".*:\n(.*?)$", mappings, flags=re.S)
             mappings = mappings[0].strip().split('\n')
             zl = set()
@@ -147,23 +168,6 @@ class SASConigurator():
         self.ZS_list = ZSs_list
         return self.ZSs_list # [[zoneset_name, {{zg1, zg2}}]]
     
-    def apply_config(self, zonegr:list, zones: str): # needs testing
-        # creating zonegroups
-        for zg in zonegr:
-            self.send_command(f"zonegroup create {zg[0]}")
-            for exp, phys in zg[1]:
-                for phy in phys:
-                    self.send_command(f"zonegroup add {zg[0]} {exp}:{phy}")
-                    
-        # creating zoneset
-        for zs in zones:
-            self.send_command(f"zoneset create {zs[0]}")
-            for mapping in zs[1]:
-                for zg1, zg2 in mapping:
-                    self.send_command(f"zoneset add {zs[0]} {zg1} {zg2}")
-        return
-
-    
     def readZoneGroupsFromJson(self, json_filepath):
         with open(json_filepath, "rb") as f:
             conf = json.load(f)
@@ -175,5 +179,7 @@ class SASConigurator():
             zonegroup = ZoneGroup(name)
             for expander, phys in exphys.items():
                 zonegroup.addToZoneGroup(expander, phys)            
-        return 
+        return
 
+    def saveSasStatetoJson(self, json_filepath):
+        pass

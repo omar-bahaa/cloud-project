@@ -1,38 +1,21 @@
-import paramiko
-import time 
+# from backEnd.Interpreter import *
+# from backEnd.ZonesConfig import *
+# from backEnd.ZonesViewr import *
+# from backEnd.sas import *
+from conf import *
+from kickstart.configurate import *
+# connect to connection server
 
-ssh = paramiko.SSHClient()
-ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect('10.117.3.2', username='lamiaa', password='#PCL@CSE')
-print("first connection done")
-chan = ssh.invoke_shell()
-print("shell done")
+# connect to sas
 
-# Ssh and wait for the password prompt.
-chan.send('ssh 192.168.4.11 -c 3des-cbc -ladmin\n')
-time.sleep(5)
-buff = ''
-while not buff.endswith('s password: '):
-    resp = chan.recv(9999).decode()
-    buff += str(resp)
+# read sas json and get zonegroups and zonesets
+# SASConigurator.readZoneGroupsFromJson(json_filepath="scheme.json")
 
-# Send the password and wait for a prompt.
-chan.send('admin\n')
-buff = ''
-print("second connection done")
-while not buff.endswith('some-prompt$ '):
-    resp = chan.recv(9999).decode()
-    buff += str(resp)
+# make object of zonegroups and zonesets from json with each's exphys and zonegroup pairs for zonegroups and zonesets respectively.
 
-# Execute whatever command and wait for a prompt again.
-chan.send('ls\n')
-buff = ''
-print("ls command done")
-while not buff.endswith('some-prompt$ '):
-    resp = chan.recv(9999).decode()
-    buff += str(resp)
+# send needed commands to sas to make the above
 
-# Now buff has the data I need.
-print ('buff', (buff))
+# kickstart, pxe, dnsmasq
+kickstart = Configurate(ksfile=KSFILEPATH, dnsmasqfile=DNSMASQFILEPATH, pxefile=PXEFILEPATH)
+kickstart.process(json_filepath=KICKSTARTJSONFILEPATH)
 
-ssh.close()
