@@ -7,7 +7,7 @@ import os
 
 
 class configurate:
-    def __init__(self,passwd,url,disk,iprange,myip,ksfile,dnsmasqfile):
+    def __init__(self,passwd,url,disk,iprange,myip,ksfile,dnsmasqfile,pxefile):
         self.passwd = passwd
         self.iprange = iprange
         self.myip = myip
@@ -15,6 +15,7 @@ class configurate:
         self.dnsmasqfile = dnsmasqfile
         self.url = url
         self.disk = disk
+        self.pxefile = pxefile
     def line_prepender(self,ksfile, line):
         with open(ksfile, 'r+') as f:
             content = f.read()
@@ -46,8 +47,8 @@ class configurate:
         self.line_prepender(self.dnsmasqfile,self.add_dhcpo66)
     def feedpxe(self):
         # self.line = f"append initrd=centos/initrd.img method=ftp://10.110.12.216/pub devfs=nomount ks=ftp://10.110.12.216/kickstart/ks.cfg"
-        os.system(f"sed -i 's/ftp:\/\/.*\/pub/ftp:\/\/{self.myip}\/pub/g' default")
-        os.system(f"sed -i 's/ftp:\/\/.*\/kick/ftp:\/\/{self.myip}\/kick/g' default")
+        os.system(f"sed -i 's/ftp:\/\/.*\/pub/ftp:\/\/{self.myip}\/pub/g' {self.pxefile}")
+        os.system(f"sed -i 's/ftp:\/\/.*\/kick/ftp:\/\/{self.myip}\/kick/g' {self.pxefile}")
 
 f = open('data.json')
 data = json.load(f)
@@ -61,7 +62,8 @@ myip = ni.ifaddresses(interface)[ni.AF_INET][0]['addr']
 # myip = "10.110.12.216"
 ksfile="ks.cfg"
 dnsmasqfile = "dnsmasq.conf"
-co1 = configurate(passwd,url,disk,iprange,myip,ksfile,dnsmasqfile)
+pxefile = "default"
+co1 = configurate(passwd,url,disk,iprange,myip,ksfile,dnsmasqfile,pxefile)
 co1.cook()
 co1.feedks()
 co1.feeddns()
