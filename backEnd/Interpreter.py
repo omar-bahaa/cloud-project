@@ -26,10 +26,9 @@ def getZonesetsConfig(dataFilePath):
     data=readInputData(dataFilePath)
     activeZoneSetName=data["ZSs"]["Active"]
     
-    #3ayzen nkhly activeZoneset tb2a instance attribute not class attribute
     ZoneSet.activeZoneset=activeZoneSetName
     ZoneSet.allZoneset.add()
-    #totalNumberOfZonesets=data["ZSs"]["No_of_ZSs"]
+    totalNumberOfZonesets=data["ZSs"]["No_of_ZSs"]
     zonesets=data["ZSs"]["ZoneSets"]
     for zoneset in zonesets.keys():
         myZoneset=ZoneSet(data["ZSs"]["ZoneSets"]["ZSname"])
