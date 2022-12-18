@@ -1,0 +1,25 @@
+default menu.c32
+prompt 0
+timeout 300
+ONTIMEOUT local
+
+menu title ########## PXE Boot Menu ##########
+
+label 1
+menu label ^1) Install CentOS 8 x64 with Local Repo
+kernel centos/vmlinuz
+append initrd=centos/initrd.img method=ftp://169.254.49.43/pub devfs=nomount ks=ftp://10.110.12.216/kickstart/ks.cfg
+
+label 2
+menu label ^2) Install CentOS 8 x64 with http://mirror.centos.org Repo
+kernel centos8/vmlinuz
+append initrd=centos8/initrd.img method=http://mirror.centos.org/centos/8/BaseOS/x86_64/os/ devfs=nomount ip=dhcp
+
+label 3
+menu label ^3) Install CentOS 8 x64 with Local Repo using VNC
+kernel centos8/vmlinuz
+append  initrd=centos8/initrd.img method=ftp://169.254.49.43/pub devfs=nomount inst.vnc inst.vncpassword=password
+
+#LABEL 1
+#KERNEL centos/vmlinuz
+#APPEND initrd=centos/initrd.img method http://192.168.145.133/centos devfs=nomount ks=http://192.168.145.133/kickstart/ks.cfg
