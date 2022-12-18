@@ -1,0 +1,5 @@
+KSFILEPATH="kickstart/ks.cfg"
+DNSMASQFILEPATH = "kickstart/dnsmasq.conf"
+PXEFILEPATH = "kickstart/default"
+SASJSONFILEPATH = "jsons/scheme.json"
+KICKSTARTJSONFILEPATH = "jsons/data.json"
