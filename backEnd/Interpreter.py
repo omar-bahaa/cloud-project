@@ -27,7 +27,6 @@ def getZonesetsConfig(dataFilePath):
     activeZoneSetName=data["ZSs"]["Active"]
     
     ZoneSet.activeZoneset=activeZoneSetName
-    ZoneSet.allZoneset.add()
     totalNumberOfZonesets=data["ZSs"]["No_of_ZSs"]
     zonesets=data["ZSs"]["ZoneSets"]
     for zoneset in zonesets.keys():
