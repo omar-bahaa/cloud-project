@@ -1,0 +1,59 @@
+{   "sas{1}IP": {
+        "ZGs":{
+            "ZoneGroups": {
+                "ZG{1}":{
+                    "ZGName": "7mada",
+                    "Exphys":{
+                        "SAS_ConnectionB": ["00", "02","25"],
+                        "SX890_7": ["04", "06"]}
+                    },
+                "ZG{2}": {
+                    "ZGName": "ex",
+                    "Exphys":{
+                        "SAS_ConnectionB": ["00", "02", "25"],
+                        "SX890_15": ["04" ,"06"]}
+                    }
+                }
+            },
+
+        "ZSs":{
+            "Active": "ZSname",
+            "ZoneSets":{
+                "ZS{1}":{
+                    "ZSname": "esmha",
+                    "mappings": [["7amada", "ex"], ["7amada", "7amada"]],
+                    "password": ";oiashf;oi"
+                }
+            }
+        }
+    },
+    "sas{2}IP":{
+        "ZGs":{
+            "ZoneGroups": {
+                "ZG{1}":{
+                    "ZGName": "7mada",
+                    "Exphys":{
+                        "SAS_ConnectionB": ["00", "02","25"],
+                        "SX890_7": ["04", "06"]}
+                    },
+                "ZG{2}": {
+                    "ZGName": "ex",
+                    "Exphys":{
+                        "SAS_ConnectionB": ["00", "02", "25"],
+                        "SX890_15": ["04" ,"06"]}
+                    }
+                }
+            },
+
+        "ZSs":{
+            "Active": "ZSname",
+            "ZoneSets":{
+                "ZS{1}":{
+                    "ZSname": "esmha",
+                    "mappings": [["7amada", "ex"], ["7amada", "7amada"]],
+                    "password": ";oiashf;oi"
+                }
+            }
+        }
+    }
+}
