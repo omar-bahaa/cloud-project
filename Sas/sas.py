@@ -3,6 +3,9 @@ import json
 import re
 from Sas.ZonesConfig import *
 from Sas.ZonesViewr import *
+from ZonesConfig import Zoneset, ZoneGroup
+
+
 
 class ConnectionServer():
     def __init__(self) -> None:
@@ -69,8 +72,8 @@ class SSHConnector(object):
         self.close_connection()
         super.__del__()
 
-class SASConigurator():
-    allcaptureCommandsList=[]
+
+class SASConnector():
     
     def __init__(self) -> None:
         self.captureCommandsList = []
@@ -97,25 +100,10 @@ class SASConigurator():
         buff = ''
         while not buff.endswith(eof):
             buff += self.shell.recv(1).decode()
-        
-    def send_command(self, command: str, eof: str='SDMCLI> ') -> str:
-        self.shell.send(command)
-        buff = ''
-        while not buff.endswith(eof):
-            resp = self.shell.recv(1).decode()
-            buff += resp
-        return buff
     
     def initalize_connection(self, channel):
         self.connect_withchannel(channel)
         self.invoke_shell()
-    
-    @classmethod
-    def sendAndCaptureCommand(cls, self, command):
-        output = self.send_command(command+"\r")
-        cls.allCaptureCommandsList.append(command)  # will this variable work on differenct classes with same variable name?
-        self.captureCommandsList.append(command)
-        return output
     
     def close_connection(self):
         self.SSHClient.close()
@@ -126,8 +114,98 @@ class SASConigurator():
     def get_shell(self):
         return self.shell
 
+class SASMaster(SASManager):
+    def __init__(self) -> None:
+        self.allZonegroups=[]
+        self.activeZoneset=""
+        self.allZonesets=set()
+        super().__init__()
+    def createZG(self,zgName):
+        ZG=ZoneGroup(zgName)
+        self.allZonegroups.append(ZG)
+        return ZG
+    def createZS(self,zsName):
+        ZS=ZoneGroup(zsName)
+        self.allZonesets.add(ZS)
+        return ZS
+    def deactivateZoneset(self):
+        command = "zoneset deactivate"
+        self.sendAndCaptureCommand(command)
+        self.activeZoneset=""
+        return 0
+    def activateZoneset(self,zonesetName):
+        if self.activeZoneset!="":
+            self.deactivateZoneset()
+        command = f"zoneset activate {zonesetName}"
+        self.sendAndCaptureCommand(command)
+        self.activeZoneset = self.zonesetName    
+        return 0
+    def deleteZoneGroup(self,zonegroup:ZoneGroup):
+        command = f"zonegroup delete single {zonegroup.zonegroupName}"
+        self.sendAndCaptureCommand(command)
+        self.allZonegroups.remove(self.allZonegroups.index(zonegroup))
+        return 0
+    def deleteAllZoneGroups(self):
+        command = "zonegroup delete all noconfirm"
+        self.sendAndCaptureCommand(command)
+        for zonegroup in self.allZonegroups:
+            del zonegroup
+        self.allZonegroups=[]
+    def readZoneGroupsFromJson(self, dataFilePath):
+        confData=self.readJson(dataFilePath)
+        ZGs=confData[self.sasIP]["ZGs"]
+        AllZoneGroups=ZGs["ZoneGroups"]
+        for zg in AllZoneGroups.keys():
+            name = AllZoneGroups[zg]["ZGName"]
+            exphys = AllZoneGroups[zg]["Exphys"]
+            zonegroup = self.createZG(name)
+            for expander, phys in exphys.items():
+                zonegroup.addToZoneGroup(expander, phys)            
+        return
 
-class Sas(ZoneGroup, ZoneSet, Viewer, SASConigurator):
+    def readZoneSetsFromJson(self, dataFilePath):
+        confData = self.readJson(dataFilePath)
+        ZSs=confData[self.sasIP]["ZSs"]
+        activeZoneSetName=ZSs["Active"]
+        self.activeZoneset=activeZoneSetName
+        zonesets=ZSs["ZoneSets"]
+        for zoneset in zonesets.keys():
+            myZoneset=self.createZS(ZSs["ZoneSets"][zoneset])
+            for mapping in ZSs["ZoneSets"][zoneset]["mappings"]:
+                myZoneset.addZoneGroupPairToZoneSet(mapping[0],mapping[1])
+        return
+
+
+class SASManager(SASConnector):
+    def __init__(self,rackNumber,sasIP) -> None:
+        self.captureCommandsList = []
+        self.sasIP=sasIP #create a SASConigurator for each sas in each rack (or if i have more than one sas in the same rack)
+        super().__init__()
+        # self.load_config()
+    def send_command(self, command: str, eof: str='SDMCLI> ') -> str:
+        self.shell.send(command)
+        buff = ''
+        while not buff.endswith(eof):
+            resp = self.shell.recv(1).decode()
+            buff += resp
+        return buff
+    def sendAndCaptureCommand(self, command):
+        output = self.send_command(command+"\r")
+        self.captureCommandsList.append(command)
+        return output
+    def readJson(self, dataFilePath):
+        with open(dataFilePath) as dataFile:
+            data = json.load(dataFile)
+        return data
+
+    def saveSasStatetoJson(self, json_filepath):
+        pass
+    
+    
+
+
+
+class showInterpreter(ZoneGroup, ZoneSet, Viewer, SASConigurator):
     def get_zonegroup(self):
         output_names = self.showZonegroup()
         ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", output_names, flags=re.S)
@@ -154,50 +232,18 @@ class Sas(ZoneGroup, ZoneSet, Viewer, SASConigurator):
         ZSs_list = ZSs[0].strip().split("\n")
         
         for zones in range(len(ZSs_list)):
-            mappings = self.showZonesetData(ZSs_list[zones])
-            mappings = re.findall(r"^.*?-{8,}\n"+ZSs_list[zones]+r".*:\n(.*?)$", mappings, flags=re.S)
+            zonesetName=ZSs_list[zones]
+            zoneset=Zoneset(zonesetName)
+            mappings = self.showZonesetData(zonesetName)
+            mappings = re.findall(r"^.*?-{8,}\n"+zonesetName+r".*:\n(.*?)$", mappings, flags=re.S)
             mappings = mappings[0].strip().split('\n')
             zl = set()
             for map in range(len(mappings)):
                 x = mappings[map].strip().split(":")
-                if x[0] in self.ZG_list:
+                if x[0] in ZoneGroup.allZonegroups:
                     zg2_list = x[1].strip().split(" ")
                     for zg2 in zg2_list:
-                        zl.add(frozenset([x[0], zg2]))
-            ZSs_list[zones] = [ZSs_list[zones], zl]
-        self.ZS_list = ZSs_list
-        return self.ZSs_list # [[zoneset_name, {{zg1, zg2}}]]
+                        zoneset.addZoneGroupPairToZoneSet(x[0], zg2)
+        return  
+        # [[zoneset_name, {{zg1, zg2}}]]
     
-    def readJson(self, dataFilePath):
-        with open(dataFilePath) as dataFile:
-            data = json.load(dataFile)
-        return data
-    
-    def readZoneGroupsFromJson(self, json_filepath):
-        with open(json_filepath, "rb") as f:
-            conf = json.load(f)
-        ZGs=conf["ZGs"]
-        AllZoneGroups=ZGs["ZoneGroups"]
-        for zg in AllZoneGroups.keys():
-            name = AllZoneGroups[zg]["ZGName"]
-            exphys = AllZoneGroups[zg]["Exphys"]
-            zonegroup = ZoneGroup(name)
-            for expander, phys in exphys.items():
-                zonegroup.addToZoneGroup(expander, phys)            
-        return
-
-    def getZonesetsConfig(self, dataFilePath):
-        data = self.readJson(dataFilePath)
-        activeZoneSetName=data["ZSs"]["Active"]
-        ZoneSet.activeZoneset=activeZoneSetName
-        totalNumberOfZonesets=data["ZSs"]["No_of_ZSs"]
-        zonesets=data["ZSs"]["ZoneSets"]
-        for zoneset in zonesets.keys():
-            myZoneset=ZoneSet(data["ZSs"]["ZoneSets"]["ZSname"])
-            ZoneSet.allZoneset.add(myZoneset)
-            for mapping in data["ZSs"]["ZoneSets"]["mappings"]:
-                myZoneset.addZoneGroupPairToZoneSet(mapping[0],mapping[1])
-        return
-
-    def saveSasStatetoJson(self, json_filepath):
-        pass
