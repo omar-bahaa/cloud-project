@@ -1,4 +1,4 @@
-from sas import SASConigurator
+from Sas.sas import SASConigurator
 class Viewer(SASConigurator):
     def __init__(self):
         return 0

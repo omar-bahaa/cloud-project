@@ -1,4 +1,4 @@
-from sas import SASConigurator
+from Sas.sas import SASConigurator
 from ZonesViewr import Viewer
 import re
 
@@ -12,7 +12,7 @@ class ZoneGroup(SASConigurator):
         
         self.command = f"zonegroup create {self.zonegroupName}"
         SASConigurator.sendAndCaptureCommand(self.command)
-        ZoneGroup.allZonegroups.append(zonegroupName)
+        ZoneGroup.allZonegroups.append(self)
     
     
     @classmethod

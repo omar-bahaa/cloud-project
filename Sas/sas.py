@@ -1,8 +1,8 @@
 import paramiko
 import json
 import re
-from backEnd.ZonesConfig import *
-from backEnd.ZonesViewr import *
+from Sas.ZonesConfig import *
+from Sas.ZonesViewr import *
 
 class ConnectionServer():
     def __init__(self) -> None:
@@ -128,7 +128,7 @@ class SASConigurator():
 
 
 class Sas(ZoneGroup, ZoneSet, Viewer, SASConigurator):
-    def get_zonegr(self):
+    def get_zonegroup(self):
         output_names = self.showZonegroup()
         ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", output_names, flags=re.S)
         ZGs_list = ZGs[0].strip().split("\n") # list of all zonegroup names
@@ -148,7 +148,7 @@ class Sas(ZoneGroup, ZoneSet, Viewer, SASConigurator):
         # return self.ZGs_list # [[zonegroup_name, [exp,[phys]]]]
         return
     
-    def get_zones(self):
+    def get_zoneset(self):
         zsnames = self.showZoneset()
         ZSs = re.findall(r"^.*?-{8,}\n(.*?)$", zsnames, flags=re.S)
         ZSs_list = ZSs[0].strip().split("\n")
@@ -168,6 +168,11 @@ class Sas(ZoneGroup, ZoneSet, Viewer, SASConigurator):
         self.ZS_list = ZSs_list
         return self.ZSs_list # [[zoneset_name, {{zg1, zg2}}]]
     
+    def readJson(self, dataFilePath):
+        with open(dataFilePath) as dataFile:
+            data = json.load(dataFile)
+        return data
+    
     def readZoneGroupsFromJson(self, json_filepath):
         with open(json_filepath, "rb") as f:
             conf = json.load(f)
@@ -179,6 +184,19 @@ class Sas(ZoneGroup, ZoneSet, Viewer, SASConigurator):
             zonegroup = ZoneGroup(name)
             for expander, phys in exphys.items():
                 zonegroup.addToZoneGroup(expander, phys)            
+        return
+
+    def getZonesetsConfig(self, dataFilePath):
+        data = self.readJson(dataFilePath)
+        activeZoneSetName=data["ZSs"]["Active"]
+        ZoneSet.activeZoneset=activeZoneSetName
+        totalNumberOfZonesets=data["ZSs"]["No_of_ZSs"]
+        zonesets=data["ZSs"]["ZoneSets"]
+        for zoneset in zonesets.keys():
+            myZoneset=ZoneSet(data["ZSs"]["ZoneSets"]["ZSname"])
+            ZoneSet.allZoneset.add(myZoneset)
+            for mapping in data["ZSs"]["ZoneSets"]["mappings"]:
+                myZoneset.addZoneGroupPairToZoneSet(mapping[0],mapping[1])
         return
 
     def saveSasStatetoJson(self, json_filepath):
