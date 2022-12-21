@@ -5,10 +5,8 @@ from Sas.ZonesConfig import *
 from Sas.ZonesViewr import *
 from ZonesConfig import Zoneset, ZoneGroup
 
-
-
-class ConnectionServer():
-    def __init__(self) -> None:
+class ConnectionServer(object):
+    def __init__(self):
         super().__init__()
         # self.load_config()
     
@@ -73,7 +71,7 @@ class SSHConnector(object):
         super.__del__()
 
 
-class SASConnector():
+class SASConnector(object):
     
     def __init__(self) -> None:
         self.captureCommandsList = []
