@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import json
+import os
 
 class group_Ui_Form(object):
     def setupUi(self, Form):
@@ -23,35 +24,66 @@ class group_Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label.setFont(font)
+
         self.label.setObjectName("label")
         self.label_3 = QtWidgets.QLabel(Form)
         self.label_3.setGeometry(QtCore.QRect(20, 150, 55, 16))
         self.label_3.setText("")
         self.label_3.setObjectName("label_3")
+
+        #ZGName
         self.textEdit = QtWidgets.QTextEdit(Form)
-        self.textEdit.setGeometry(QtCore.QRect(190, 110, 231, 21))
+        self.textEdit.setGeometry(QtCore.QRect(190, 100, 231, 21))
         self.textEdit.setObjectName("textEdit")
+        #SAS_ConnectA
         self.textEdit_2 = QtWidgets.QTextEdit(Form)
-        self.textEdit_2.setGeometry(QtCore.QRect(190, 140, 231, 71))
+        self.textEdit_2.setGeometry(QtCore.QRect(190, 140, 231, 21))
         self.textEdit_2.setObjectName("textEdit_2")
+
+        #SAS ConnectB
         self.textEdit_3 = QtWidgets.QTextEdit(Form)
-        self.textEdit_3.setGeometry(QtCore.QRect(190, 220, 231, 81))
+        self.textEdit_3.setGeometry(QtCore.QRect(190, 180, 231, 21))
         self.textEdit_3.setObjectName("textEdit_3")
+
+        #SX890_7
+        self.textEdit_4 = QtWidgets.QTextEdit(Form)
+        self.textEdit_4.setGeometry(QtCore.QRect(190, 220, 231, 21))
+        self.textEdit_4.setObjectName("textEdit_4")
+
+        #SX890_15
+        self.textEdit_5 = QtWidgets.QTextEdit(Form)
+        self.textEdit_5.setGeometry(QtCore.QRect(190, 260, 231, 21))
+        self.textEdit_5.setObjectName("textEdit_5")
+
+
+
         self.widget = QtWidgets.QWidget(Form)
         self.widget.setGeometry(QtCore.QRect(20, 90, 141, 201))
         self.widget.setObjectName("widget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
+
+        #ZGName
         self.label_2 = QtWidgets.QLabel(self.widget)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
+        #SASConnectA
         self.label_4 = QtWidgets.QLabel(self.widget)
         self.label_4.setObjectName("label_4")
         self.verticalLayout.addWidget(self.label_4)
+        #SASConnectB
         self.label_5 = QtWidgets.QLabel(self.widget)
         self.label_5.setObjectName("label_5")
         self.verticalLayout.addWidget(self.label_5)
+        #SX890_7
+        self.label_6 = QtWidgets.QLabel(self.widget)
+        self.label_6.setObjectName("label_6")
+        self.verticalLayout.addWidget(self.label_6)
+        #SX890_15
+        self.label_7 = QtWidgets.QLabel(self.widget)
+        self.label_7.setObjectName("label_7")
+        self.verticalLayout.addWidget(self.label_7)
 
         self.pushButton.clicked.connect(self.button_clicked)
 
@@ -62,24 +94,46 @@ class group_Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Group Zone"))
         self.pushButton.setText(_translate("Form", "Create"))
-        self.label.setText(_translate("Form", "Create a Zone group       "))
-        self.label_2.setText(_translate("Form", "Group Zone Name "))
-        self.label_4.setText(_translate("Form", "Server Names"))
-        self.label_5.setText(_translate("Form", "HardDisk Names"))
+
+        self.label.setText(_translate("Form", "Create a Zone group"))
+        self.label_2.setText(_translate("Form", "ZGNAme"))
+        self.label_4.setText(_translate("Form", "SASConnectA"))
+        self.label_5.setText(_translate("Form", "SASConnectB"))
+        self.label_6.setText(_translate("Form", "SX890_7"))
+        self.label_7.setText(_translate("Form", "SX890_15"))
 
     def button_clicked(self):
+        print("created")
         #Translate them into text 
-        groupZoneName = self.textEdit.toPlainText()
-        serverNames = self.textEdit_2.toPlainText()
-        hardDiskNames = self.textEdit_3.toPlainText()
+        ZGName = self.textEdit.toPlainText() 
+        SASConnectA = self.textEdit_2.toPlainText() 
+        SASConnectB = self.textEdit_3.toPlainText()
+        SX890_7 = self.textEdit_4.toPlainText()
+        SX890_15 = self.textEdit_5.toPlainText()
 
-        dictionary = { 'groupZoneName': groupZoneName,
-                       'serverNames': serverNames, 
-                        'hardDiskNames': hardDiskNames
-        }
+        #make a counter 
+        if os.path.exists("GroupZones.json"):
+            with open('GroupZones.json', 'r+') as f:
+                data = json.load(f)
+                #print(data)
+        else:
+            data = {"counter": 0}
 
-        json_object = json.dumps(dictionary, indent=4)
-        with open("GroupZones.json", "w") as outfile:
+        exp = {"SASConnectA": SASConnectA,
+        "SASConnectB": SASConnectB,
+        "SX890_7": SX890_7,
+        "SX890_15" : SX890_15}
+        
+        my_json = {"ZGName": ZGName, "Exphy" : {}}
+        for k, v in exp.items():
+            if exp[k] != "":
+                my_json["Exphy"][k] = v 
+
+        data[data["counter"]] = my_json
+        data["counter"]+=1
+        json_object = json.dumps(data, indent=4)
+    
+        with open("GroupZones.json", "w+") as outfile:
             outfile.write(json_object)
 
 if __name__ == "__main__":
