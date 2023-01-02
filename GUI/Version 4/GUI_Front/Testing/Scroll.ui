@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0">
+     <widget class="QPushButton" name="pushButton_40">
+      <property name="text">
+       <string>Next</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="pushButton_39">
+      <property name="text">
+       <string>Close</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>776</width>
+         <height>455</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuCloud_Technology">
+    <property name="title">
+     <string>Cloud Technology</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuNetwork">
+    <property name="title">
+     <string>Network</string>
+    </property>
+    <addaction name="actionPhysical_Network"/>
+    <addaction name="actionSystem_Network"/>
+   </widget>
+   <widget class="QMenu" name="menuStorage">
+    <property name="title">
+     <string>Storage</string>
+    </property>
+    <addaction name="actionOperating_System"/>
+   </widget>
+   <widget class="QMenu" name="menuRAID">
+    <property name="title">
+     <string>RAID</string>
+    </property>
+   </widget>
+   <addaction name="menuCloud_Technology"/>
+   <addaction name="menuNetwork"/>
+   <addaction name="menuStorage"/>
+   <addaction name="menuRAID"/>
+  </widget>
+  <action name="actionPhysical_Network">
+   <property name="text">
+    <string>Physical Network</string>
+   </property>
+  </action>
+  <action name="actionOperating_System">
+   <property name="text">
+    <string>Operating System</string>
+   </property>
+  </action>
+  <action name="actionSystem_Network">
+   <property name="text">
+    <string>System Network</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

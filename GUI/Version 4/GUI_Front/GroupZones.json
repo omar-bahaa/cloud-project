@@ -1,0 +1,16 @@
+{
+    "counter": 2,
+    "0": {
+        "ZGName": "er",
+        "Exphy": {
+            "SASConnectB": "er",
+            "SX890_15": "er"
+        }
+    },
+    "1": {
+        "ZGName": "gfh",
+        "Exphy": {
+            "SASConnectB": "fdh"
+        }
+    }
+}

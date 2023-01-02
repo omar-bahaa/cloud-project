@@ -1,0 +1,54 @@
+
+       <string>numberOfHarddiskArrays</string>
+      
+       <string>numberOfHarddisksInArray</string>
+      
+       <string>numberOfServers</string>
+      
+       <string>serverNames</string>
+      
+       <string>basicKickstartConfigurations</string>
+      
+       <string>hardiskToServerAssociationMatrix</string>
+
+
+     
+       <string>fileSystemType</string>
+      
+       <string>isRAID</string>
+      
+       <string>RAIDLevel</string>
+      
+       <string>partitioningSchema</string>
+      
+       <string>OperatingSystemType</string>
+      
+       <string>packages</string>
+      
+       <string>packageManager</string>
+      
+       <string> installedPackages</string>
+      
+       <string>uninstalledPackages</string>
+      
+
+       <string>cloudTechnologyApplication</string>
+     
+       <string>neededPackages</string>
+   
+       <string>DataStoreFileSysyem</string>
+     
+       <string>databaseTool</string>
+      
+       <string>databaseAdminCredentials
+</string>
+     
+    
+       <string>IPVersion</string>
+      
+       <string>physicalDataNetworkIPRange</string>
+     
+       <string>numberOfVLANs</string>
+    
+       <string>topology</string>
+      

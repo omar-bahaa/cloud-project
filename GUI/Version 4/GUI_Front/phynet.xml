@@ -1,0 +1,33 @@
+
+       <string>numberOfServers</string>
+      
+       <string>dictionaryOfServerNamesAndMACAddresses</string>
+      
+       <string>numberOfHarddiskArrays</string>
+      
+       <string>numberOfHarddisksInArray</string>
+      
+       <string>IPVersion</string>
+      
+       <string>managementNetworkIPRange</string>
+      
+       <string>physicalDataNetworkIPRange</string>
+      
+       <string>virtualMachineDataNetworkIPRange</string>
+      
+       <string>frontEndServerMACAddress</string>
+      
+       <string>frontEndServerIPAddress</string>
+      
+       <string>frontEndServerName</string>
+      
+       <string>connectionServerName</string>
+      
+       <string>connectionServerIPAddress</string>
+      
+       <string>connectionServerPortNumber</string>
+      
+       <string>storagePoolConfigurationPreferences</string>
+
+       
+      
