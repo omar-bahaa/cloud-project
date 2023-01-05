@@ -17,10 +17,10 @@
             },
 
         "ZSs":{
-            "Active": "ZSname",
+            "Active": "ZSName",
             "ZoneSets":{
                 "ZS{1}":{
-                    "ZSname": "esmha",
+                    "ZSName": "esmha",
                     "mappings": [["7amada", "ex"], ["7amada", "7amada"]],
                     "password": ";oiashf;oi"
                 }
@@ -46,12 +46,11 @@
             },
 
         "ZSs":{
-            "Active": "ZSname",
+            "Active": "ZSName",
             "ZoneSets":{
                 "ZS{1}":{
-                    "ZSname": "esmha",
-                    "mappings": [["7amada", "ex"], ["7amada", "7amada"]],
-                    "password": ";oiashf;oi"
+                    "ZSName": "esmha",
+                    "mappings": [["7amada", "ex"], ["7amada", "7amada"]]
                 }
             }
         }

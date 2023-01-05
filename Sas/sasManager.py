@@ -1,97 +1,30 @@
 import paramiko
 import json
 import re
-from Sas.sasConfigurator import *
-from Sas.sasViewer import *
-from sasConfigurator import Zoneset, ZoneGroup
+from Sas.sasViewer import Viewer
+from Sas.sasConfigurator import ZoneSet, ZoneGroup
 
-class ConnectionServer(object):
-    def __init__(self):
-        super().__init__()
-        # self.load_config()
-    
-    def load_config(self, json_filepath: str) -> None:
-        with open(json_filepath, "rb") as f:
-            conf = json.load(f)
-        self.CONNECTION_SERVER_IP=conf["connection_server_ip"]
-        self.CONNECTION_SERVER_USERNAME=conf["connection_server_username"]
-        self.CONNECTION_SERVER_PASSWORD=conf["connection_server_password"]
-    
-    def connect(self):
-        self.SSHClient = paramiko.SSHClient()
-        self.SSHClient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.SSHClient.connect(self.CONNECTION_SERVER_IP, username=self.CONNECTION_SERVER_USERNAME, password=self.CONNECTION_SERVER_PASSWORD)
-        
-    def get_SSHClient(self):
-        return self.SSHClient
-    
-    def close_connection(self):
-        self.SSHClient.close()
-    
-    def get_transport(self):
-        return self.SSHClient.get_transport()
-        
-    def make_channel(self, transport, dest_addr=("192.168.4.11", 22), src_addr=("127.0.0.1", 1234)):
-        return transport.open_channel("direct-tcpip", dest_addr=dest_addr, src_addr=src_addr)
-    
-    def __del__(self):
-        self.close_connection()
-        # super().__del__()
-    
-
-class SSHConnector(object):
-    def __init__(self, ip, username:str=None, password:str=None) -> None:
-        super.__init__()
-        self.init_ssh()
+# does this cause circular import between the Viewer and SasManager?
+class SASConnector():
+    def __init__(self, ip, rackNumber) -> None:
         self.ip = ip
-        self.__username = username
-        self.__password = password
-    
-    def init_ssh(self):
-        self.SSHClient = paramiko.SSHClient()
-        self.SSHClient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    
-    def connect(self, channel=None):
-        self.SSHClient.connect(self.ip, username=self.__username, password=self.__password, sock=channel)
-        
-    def get_SSHClient(self):
-        return self.SSHClient
-    
-    def close_connection(self):
-        self.SSHClient.close()
-    
-    def get_transport(self):
-        return self.SSHClient.get_transport()
-        
-    def make_channel(self, transport, dest_addr=None, src_addr=None):
-        return transport.open_channel("direct-tcpip", dest_addr=dest_addr, src_addr=src_addr)
-
-    def __del__(self):
-        self.close_connection()
-        super.__del__()
-
-
-class SASConnector(object):
-    
-    def __init__(self) -> None:
+        self.__username=""
+        self.__password=""
+        self.SSHClient=None
+        self.shell=None
         self.captureCommandsList = []
-        super().__init__()
-        # self.load_config()
-    
+        self.rackNumber=rackNumber
+
     def load_config(self, json_filepath: str) -> None:
         with open(json_filepath, "rb") as f:
             conf = json.load(f)
-        self.SAS5_SERVER_IP=conf["sas5_server_ip"]
-        self.SAS6_SERVER_IP=conf["sas6_server_ip"]
-        self.SAS5_USERNAME=conf["sas5_server_username"]
-        self.SAS6_USERNAME=conf["sas6_server_username"]
-        self.SAS5_PASSWORD=conf["sas5_server_password"]
-        self.SAS6_PASSWORD=conf["sas6_server_password"]
+        self.__username = conf[f"{self.ip}_username"]
+        self.__password = conf[f"{self.ip}_password"]
     
     def connect_withchannel(self, channel):
         self.SSHClient = paramiko.SSHClient()
         self.SSHClient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.SSHClient.connect(self.SAS5_SERVER_IP, username=self.SAS5_USERNAME, password=self.SAS5_PASSWORD, sock=channel)
+        self.SSHClient.connect(self.ip, username=self.__username, password=self.__password, sock=channel)
         
     def invoke_shell(self, eof: str="SDMCLI> "):
         self.shell = self.SSHClient.invoke_shell()
@@ -112,74 +45,6 @@ class SASConnector(object):
     def get_shell(self):
         return self.shell
 
-class SASMaster(SASManager):
-    def __init__(self) -> None:
-        self.allZonegroups=[]
-        self.activeZoneset=""
-        self.allZonesets=set()
-        super().__init__()
-    def createZG(self,zgName):
-        ZG=ZoneGroup(zgName)
-        self.allZonegroups.append(ZG)
-        return ZG
-    def createZS(self,zsName):
-        ZS=ZoneGroup(zsName)
-        self.allZonesets.add(ZS)
-        return ZS
-    def deactivateZoneset(self):
-        command = "zoneset deactivate"
-        self.sendAndCaptureCommand(command)
-        self.activeZoneset=""
-        return 0
-    def activateZoneset(self,zonesetName):
-        if self.activeZoneset!="":
-            self.deactivateZoneset()
-        command = f"zoneset activate {zonesetName}"
-        self.sendAndCaptureCommand(command)
-        self.activeZoneset = self.zonesetName    
-        return 0
-    def deleteZoneGroup(self,zonegroup:ZoneGroup):
-        command = f"zonegroup delete single {zonegroup.zonegroupName}"
-        self.sendAndCaptureCommand(command)
-        self.allZonegroups.remove(self.allZonegroups.index(zonegroup))
-        return 0
-    def deleteAllZoneGroups(self):
-        command = "zonegroup delete all noconfirm"
-        self.sendAndCaptureCommand(command)
-        for zonegroup in self.allZonegroups:
-            del zonegroup
-        self.allZonegroups=[]
-    def readZoneGroupsFromJson(self, dataFilePath):
-        confData=self.readJson(dataFilePath)
-        ZGs=confData[self.sasIP]["ZGs"]
-        AllZoneGroups=ZGs["ZoneGroups"]
-        for zg in AllZoneGroups.keys():
-            name = AllZoneGroups[zg]["ZGName"]
-            exphys = AllZoneGroups[zg]["Exphys"]
-            zonegroup = self.createZG(name)
-            for expander, phys in exphys.items():
-                zonegroup.addToZoneGroup(expander, phys)            
-        return
-
-    def readZoneSetsFromJson(self, dataFilePath):
-        confData = self.readJson(dataFilePath)
-        ZSs=confData[self.sasIP]["ZSs"]
-        activeZoneSetName=ZSs["Active"]
-        self.activeZoneset=activeZoneSetName
-        zonesets=ZSs["ZoneSets"]
-        for zoneset in zonesets.keys():
-            myZoneset=self.createZS(ZSs["ZoneSets"][zoneset])
-            for mapping in ZSs["ZoneSets"][zoneset]["mappings"]:
-                myZoneset.addZoneGroupPairToZoneSet(mapping[0],mapping[1])
-        return
-
-
-class SASManager(SASConnector):
-    def __init__(self,rackNumber,sasIP) -> None:
-        self.captureCommandsList = []
-        self.sasIP=sasIP #create a SASConigurator for each sas in each rack (or if i have more than one sas in the same rack)
-        super().__init__()
-        # self.load_config()
     def send_command(self, command: str, eof: str='SDMCLI> ') -> str:
         self.shell.send(command)
         buff = ''
@@ -187,23 +52,149 @@ class SASManager(SASConnector):
             resp = self.shell.recv(1).decode()
             buff += resp
         return buff
+    
     def sendAndCaptureCommand(self, command):
         output = self.send_command(command+"\r")
         self.captureCommandsList.append(command)
         return output
-    def readJson(self, dataFilePath):
-        with open(dataFilePath) as dataFile:
-            data = json.load(dataFile)
-        return data
-
-    def saveSasStatetoJson(self, json_filepath):
-        pass
     
+    def sendAndCaptureCommandWithObject(self, command, object):
+        output = self.sendAndCaptureCommand(command)
+        object.addCommand(command)
+        return output
+
+
+# We shouldn't make the zonegroup and zoneset classes connect to the sas every time we create a new instance of them,
+# only the master shall send the commands to the sas
+class SASManager(Viewer):
+    def __init__(self, rackNumber, ip, password="") -> None:
+        self.allZonegroups = {}
+        self.allZonesets = {}
+        self.activeZoneset = None
+        self.__password = password
+        super().__init__(ip=ip, rackNumber=rackNumber)
+        
+    def importZoneGroup(self, zonegroup:ZoneGroup):
+        if zonegroup.name in self.allZonegroups.keys():
+            raise Exception("Zonegroup already exists")
+        self.allZonegroups[zonegroup.name] = zonegroup
+
+    def importZoneSet(self, zoneset:ZoneSet):
+        if zoneset.name in self.allZonesets.keys():
+            raise Exception("Zoneset already exists")
+        self.allZonesets[zoneset.name] = zoneset
     
+    def createZoneGroup(self, zgName) -> ZoneGroup:
+        if zgName in self.allZonegroups.keys():
+            raise Exception("Zonegroup already exists")
+        ZG = ZoneGroup(zgName)
+        command = ZoneGroup.create_zonegr_command(zgName)
+        self.sendAndCaptureCommandWithObject(command, ZG)
+        self.importZoneGroup(ZG)
+        return ZG
+    
+    def createZoneSet(self, zsName) -> ZoneSet:
+        if zsName in self.allZonesets.keys():
+            raise Exception("Zoneset already exists")
+        ZS = ZoneGroup(zsName)
+        command = ZoneSet.create_zones_command(zsName)
+        self.sendAndCaptureCommandWithObject(command, ZS)
+        self.importZoneSet(ZS)
+        return ZS
+    
+    def renameZoneGroup(self, zonegroup:ZoneGroup, newZoneGroupName:str):
+        if newZoneGroupName in self.allZonegroups.keys():
+            raise Exception("Can't rename: another zonegroup already exists with this name")
+        command = ZoneGroup.rename_zonegr_command(zonegroup.name, newZoneGroupName)
+        self.sendAndCaptureCommandWithObject(command, zonegroup)
+        zonegroup.name = newZoneGroupName
+        return 0
+    
+    def renameZoneSet(self, zoneset:ZoneSet, newZoneSetName:str):
+        if newZoneSetName in self.allZonesets.keys():
+            raise Exception("Can't rename: another zoneset already exists with this name")
+        command = ZoneSet.rename_zones_command(zoneset.name, newZoneSetName)
+        self.sendAndCaptureCommandWithObject(command, zoneset)
+        zoneset.name = newZoneSetName
+        return 0
+    
+    def deleteZoneGroup(self, zonegroup:ZoneGroup):
+        if zonegroup.name in self.allZonegroups.keys():
+            command = ZoneGroup.delete_zonegr_command(zonegroup.name)
+            self.sendAndCaptureCommandWithObject(command, zonegroup)
+            self.allZonegroups.remove(zonegroup)
+            del zonegroup
+            return 0
+    
+    def deleteZoneSet(self, zoneset:ZoneSet):
+        if zoneset.name in self.allZonesets.keys():
+            command = ZoneSet.delete_zones_command(zoneset.name)
+            self.sendAndCaptureCommandWithObject(command, zoneset)
+            self.allZonesets.remove(zoneset)
+            del zoneset
+            return 0
+    
+    def deleteAllZoneGroups(self):
+        command = ZoneGroup.delete_all_zonegr_command()
+        self.sendAndCaptureCommand(command)
+        for _, zonegroup in self.allZonegroups.items():
+            del zonegroup
+        self.allZonegroups.clear()
+    
+    def deleteAllZoneSets(self):
+        command = ZoneSet.delete_all_zones_command()
+        self.sendAndCaptureCommand(command)
+        for _, zoneset in self.allZonesets.items():
+            del zoneset
+        self.allZonesets.clear()
+    
+    def deactivateZoneSet(self):
+        command = ZoneSet.deact_zones_command(self.__password)
+        self.sendAndCaptureCommand(command)
+        self.activeZoneset = None
+        return 0
+    
+    def activateZoneSet(self, zoneset:ZoneSet):
+        if not self.activeZoneset:
+            self.deactivateZoneSet()
+        command = ZoneSet.act_zones_command_command(zoneset.name, self.__password)
+        self.sendAndCaptureCommand(command)
+        self.activeZoneset = zoneset
+        return 0
+    
+    def readZoneGroupsFromJson(self, dataFilePath):
+        confData = self.readJson(dataFilePath)
+        ZGs = confData[self.sasIP]["ZGs"]
+        AllZoneGroups = ZGs["ZoneGroups"]
+        for zg in AllZoneGroups.keys():
+            name = AllZoneGroups[zg]["ZGName"]
+            exphys = AllZoneGroups[zg]["Exphys"]
+            if name in self.allZonegroups.keys():
+                self.allZonegroups[name].clear()
+            else:
+                zonegroup = self.createZoneGroup(name)
+            for expander, phys in exphys.items():
+                zonegroup.addToZoneGroup(expander, phys)
+        return
 
+    def readZoneSetsFromJson(self, dataFilePath):
+        confData = self.readJson(dataFilePath)
+        ZSs = confData[self.sasIP]["ZSs"]
+        activeZoneSetName = ZSs["Active"]
+        if activeZoneSetName not in self.allZonesets.keys():
+            self.createZoneSet(activeZoneSetName)
+        self.activateZoneSet(self.allZonesets[activeZoneSetName])
+        zonesets = ZSs["ZoneSets"]
+        for zoneset in zonesets.keys():
+            ZSname = zonesets[zoneset]["ZSName"]
+            if ZSname in self.allZonesets.keys():
+                self.allZonesets[ZSname].clear()
+            else:
+                myZoneset = self.createZoneSet(ZSname)
+            for mapping in zonesets[zoneset]["mappings"]:
+                myZoneset.addZoneGroupPairToZoneSet(mapping[0],mapping[1])
+        return
 
-
-class showInterpreter(ZoneGroup, ZoneSet, Viewer, SASConigurator):
     def get_zonegroup(self):
         output_names = self.showZonegroup()
         ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", output_names, flags=re.S)
@@ -231,7 +222,7 @@ class showInterpreter(ZoneGroup, ZoneSet, Viewer, SASConigurator):
         
         for zones in range(len(ZSs_list)):
             zonesetName=ZSs_list[zones]
-            zoneset=Zoneset(zonesetName)
+            zoneset=ZoneSet(zonesetName)
             mappings = self.showZonesetData(zonesetName)
             mappings = re.findall(r"^.*?-{8,}\n"+zonesetName+r".*:\n(.*?)$", mappings, flags=re.S)
             mappings = mappings[0].strip().split('\n')
@@ -244,4 +235,12 @@ class showInterpreter(ZoneGroup, ZoneSet, Viewer, SASConigurator):
                         zoneset.addZoneGroupPairToZoneSet(x[0], zg2)
         return  
         # [[zoneset_name, {{zg1, zg2}}]]
+    
+    def readJson(self, dataFilePath):
+        with open(dataFilePath) as dataFile:
+            data = json.load(dataFile)
+        return data
+
+    def saveSasStatetoJson(self, json_filepath):
+        pass
     
