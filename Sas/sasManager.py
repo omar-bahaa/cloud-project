@@ -103,6 +103,8 @@ class SASManager(Viewer):
         return ZS
     
     def renameZoneGroup(self, zonegroup:ZoneGroup, newZoneGroupName:str):
+        if not zonegroup.name in self.allZonegroups.keys():
+            raise Exception("Can't rename: no zonegroup with given name exists")
         if newZoneGroupName in self.allZonegroups.keys():
             raise Exception("Can't rename: another zonegroup already exists with this name")
         command = ZoneGroup.rename_zonegr_command(zonegroup.name, newZoneGroupName)
@@ -111,6 +113,8 @@ class SASManager(Viewer):
         return 0
     
     def renameZoneSet(self, zoneset:ZoneSet, newZoneSetName:str):
+        if not zoneset.name in self.allZonesets.keys():
+            raise Exception("Can't rename: no zoneset with given name exists")
         if newZoneSetName in self.allZonesets.keys():
             raise Exception("Can't rename: another zoneset already exists with this name")
         command = ZoneSet.rename_zones_command(zoneset.name, newZoneSetName)
@@ -122,7 +126,7 @@ class SASManager(Viewer):
         if zonegroup.name in self.allZonegroups.keys():
             command = ZoneGroup.delete_zonegr_command(zonegroup.name)
             self.sendAndCaptureCommandWithObject(command, zonegroup)
-            self.allZonegroups.remove(zonegroup)
+            self.allZonegroups.pop(zonegroup.name)
             del zonegroup
             return 0
     
@@ -130,7 +134,7 @@ class SASManager(Viewer):
         if zoneset.name in self.allZonesets.keys():
             command = ZoneSet.delete_zones_command(zoneset.name)
             self.sendAndCaptureCommandWithObject(command, zoneset)
-            self.allZonesets.remove(zoneset)
+            self.allZonesets.pop(zoneset.name)
             del zoneset
             return 0
     

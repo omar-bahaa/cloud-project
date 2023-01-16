@@ -42,9 +42,6 @@ class ZoneGroup():
     
     def addCommand(self, command):
         self.captureCommandsList.append(command)
-        
-    def __del__(self):
-        super().__del__()
 
 
 class ZoneSet():
@@ -82,9 +79,6 @@ class ZoneSet():
     def clearZoneSet(self):
         self.zonegroupPairsSetofSets.clear()
         return 0
-        
-    def __del__(self):
-        super().__del__()
 
 
 # below classes shouldn't be used yet
