@@ -67,11 +67,11 @@ class SASConnector():
 # We shouldn't make the zonegroup and zoneset classes connect to the sas every time we create a new instance of them,
 # only the master shall send the commands to the sas
 class SASManager(Viewer):
-    def __init__(self, rackNumber, ip, password="") -> None:
+    def __init__(self, rackNumber, ip, ZoneConfigPassword="") -> None:
         self.allZonegroups = {}
         self.allZonesets = {}
         self.activeZoneset = None
-        self.__password = password
+        self.__ZoneConfigPassword = ZoneConfigPassword
         super().__init__(ip=ip, rackNumber=rackNumber)
         
     def importZoneGroup(self, zonegroup:ZoneGroup):
@@ -129,6 +129,8 @@ class SASManager(Viewer):
             self.allZonegroups.pop(zonegroup.name)
             del zonegroup
             return 0
+        else:
+            raise Exception("Can't delete: Zone group does not exist")
     
     def deleteZoneSet(self, zoneset:ZoneSet):
         if zoneset.name in self.allZonesets.keys():
@@ -137,6 +139,8 @@ class SASManager(Viewer):
             self.allZonesets.pop(zoneset.name)
             del zoneset
             return 0
+        else:
+            raise Exception("Can't delete: Zoneset does not exist")
     
     def deleteAllZoneGroups(self):
         command = ZoneGroup.delete_all_zonegr_command()
@@ -153,7 +157,7 @@ class SASManager(Viewer):
         self.allZonesets.clear()
     
     def deactivateZoneSet(self):
-        command = ZoneSet.deact_zones_command(self.__password)
+        command = ZoneSet.deact_zones_command(self.__ZoneConfigPassword)
         self.sendAndCaptureCommand(command)
         self.activeZoneset = None
         return 0
@@ -161,11 +165,12 @@ class SASManager(Viewer):
     def activateZoneSet(self, zoneset:ZoneSet):
         if not self.activeZoneset:
             self.deactivateZoneSet()
-        command = ZoneSet.act_zones_command_command(zoneset.name, self.__password)
+        command = ZoneSet.act_zones_command_command(zoneset.name, self.__ZoneConfigPassword)
         self.sendAndCaptureCommand(command)
         self.activeZoneset = zoneset
         return 0
     
+   #//////////////////////////////////////////////////////
     def readZoneGroupsFromJson(self, dataFilePath):
         confData = self.readJson(dataFilePath)
         ZGs = confData[self.sasIP]["ZGs"]
@@ -180,7 +185,8 @@ class SASManager(Viewer):
             for expander, phys in exphys.items():
                 zonegroup.addToZoneGroup(expander, phys)
         return
-
+ 
+   #//////////////////////////////////////////////////////
     def readZoneSetsFromJson(self, dataFilePath):
         confData = self.readJson(dataFilePath)
         ZSs = confData[self.sasIP]["ZSs"]
@@ -198,7 +204,8 @@ class SASManager(Viewer):
             for mapping in zonesets[zoneset]["mappings"]:
                 myZoneset.addZoneGroupPairToZoneSet(mapping[0],mapping[1])
         return
-
+ 
+   #//////////////////////////////////////////////////////
     def get_zonegroup(self):
         output_names = self.showZonegroup()
         ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", output_names, flags=re.S)
@@ -219,6 +226,8 @@ class SASManager(Viewer):
         # return self.ZGs_list # [[zonegroup_name, [exp,[phys]]]]
         return
     
+     
+   #//////////////////////////////////////////////////////
     def get_zoneset(self):
         zsnames = self.showZoneset()
         ZSs = re.findall(r"^.*?-{8,}\n(.*?)$", zsnames, flags=re.S)
@@ -239,12 +248,14 @@ class SASManager(Viewer):
                         zoneset.addZoneGroupPairToZoneSet(x[0], zg2)
         return  
         # [[zoneset_name, {{zg1, zg2}}]]
-    
+     
+   #//////////////////////////////////////////////////////
     def readJson(self, dataFilePath):
         with open(dataFilePath) as dataFile:
             data = json.load(dataFile)
         return data
-
+ 
+   #//////////////////////////////////////////////////////
     def saveSasStatetoJson(self, json_filepath):
         pass
     
