@@ -1,4 +1,3 @@
-from Sas.sasManager import SASManager
 
 
 class ZoneGroup():
@@ -51,7 +50,7 @@ class ZoneSet():
     add_zones_command = lambda zones, zonegr1, zonegr2: f"zoneset add {zones} {zonegr1} {zonegr2}"
     rm_zones_command = lambda zones, zonegr1, zonegr2: f"zoneset remove {zones} {zonegr1} {zonegr2}"
     act_zones_command_command = lambda zones, passw: f"zoneset activate {zones}\r{passw}\r"
-    deact_zones_command = lambda passw="": f"zoneset deactivate\n{passw}\r"
+    deact_zones_command = lambda passw="": f"zoneset deactivate\r{passw}\r"
     passwd_command = lambda zones, opass, npass: f"zones passwd {zones}\r{opass}\r\r{npass}\r\r{npass}\r"
     rename_zones_command = lambda oldName, newName: f"zoneset rename {oldName} {newName}"
     
@@ -85,7 +84,7 @@ class ZoneSet():
 class Domain():
     pass
      
-class Device(SASManager):
+class Device():
     def __init__(self, phy,aliasName=""):
         self.phyDictionary={"enabled":set(phy),"disabled":set()}
         self.aliasName=aliasName

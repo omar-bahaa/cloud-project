@@ -1,0 +1,2 @@
+1) Save to file and load SAS Server instance of the python class with its attributes so that they are maintained after execution globally
+2) on renameof zonegroup and zoneset you need to rename the keys in all zonegroiups and allzonesets too

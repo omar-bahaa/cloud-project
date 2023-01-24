@@ -35,9 +35,9 @@ class ConnectionServer(object):
             self.get_transport()
         return self.transport.open_channel("direct-tcpip", dest_addr=dest_addr, src_addr=src_addr)
     
-    def __del__(self):
-        self.close_connection()
-        super().__del__()
+    # def __del__(self):
+    #     self.close_connection()
+    #     super().__del__()
     
 
 class SSHConnector(object):
@@ -70,6 +70,6 @@ class SSHConnector(object):
             self.get_transport()
         return self.transport.open_channel("direct-tcpip", dest_addr=dest_addr, src_addr=src_addr)
 
-    def __del__(self):
-        self.close_connection()
-        super.__del__()
+    # def __del__(self):
+    #     self.close_connection()
+    #     super.__del__()

@@ -1,4 +1,4 @@
-from Sas.sasManager import SASConnector
+from Sas.SasConnector import SASConnector
 
 
 class Viewer(SASConnector):    
