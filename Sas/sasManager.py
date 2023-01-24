@@ -14,6 +14,22 @@ class SASManager(Viewer):
         self.activeZoneset = None
         self.__ZoneConfigPassword = ZoneConfigPassword
         super().__init__(ip=ip, rackNumber=rackNumber)
+
+    def addPhysToZoneGroup(self,zonegroup,exphys):
+        if not zonegroup.name in self.allZonegroups.keys():
+            raise Exception("no zonegroup with given name exists")
+        for expander in exphys.keys():
+            for phys in exphys[expander]:
+                command = ZoneGroup.add_zonegr_command(zonegroup.name, expander, phys)
+                self.sendAndCaptureCommandWithObject(command, zonegroup)
+        zonegroup.addToZoneGroup(exphys)
+        
+
+    def addZonegroupsToZoneSet(self,zoneset,ZG1,ZG2):
+        command = ZoneSet.add_zones_command(zoneset,ZG1,ZG2)
+        self.sendAndCaptureCommandWithObject(command, zoneset)
+        zoneset.addZoneGroupPairToZoneSet(ZG1,ZG2)
+        
         
     def importZoneGroup(self, zonegroup:ZoneGroup):
         if zonegroup.name in self.allZonegroups.keys():
@@ -131,21 +147,19 @@ class SASManager(Viewer):
                 raise Exception("zonegroup already exists")
             else:
                 zonegroup = self.createZoneGroup(ZGName)
-                zonegroup.addToZoneGroup(exphys)
+                self.addPhysToZoneGroup(zonegroup,exphys)
         return
  
     def executeZoneSetsConfig(self):
-        # if self.activeZoneSetNameData not in self.allZonesets.keys():
-        #     self.createZoneSet(self.activeZoneSetNameData)
-      
         for zoneset in self.AllZonesetsData.keys():
             ZSname = self.AllZonesetsData[zoneset]["ZSName"]
             if ZSname in self.allZonesets.keys():
                 raise Exception("zoneset already exists")
             else:
                 myZoneset = self.createZoneSet(ZSname)
-            for mapping in self.AllZonesetsData[zoneset]["mappings"]:
-                myZoneset.addZoneGroupPairToZoneSet(mapping[0],mapping[1])
+                for mapping in self.AllZonesetsData[zoneset]["mappings"]:
+                    print(mapping)
+                    self.addZonegroupsToZoneSet(myZoneset,mapping[0],mapping[1])
         self.activateZoneSet(self.allZonesets[self.activeZoneSetNameData])
         return
  

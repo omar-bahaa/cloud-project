@@ -6,21 +6,21 @@
                 "ZG{1}":{
                     "ZGName": "myZG1",
                     "Exphys":{
-                        "SAS_ConnectionB": ["00", "02","25"],
-                        "SX890_7": ["04", "06"]}
+                        "SAS_ConnectionBlade_06": ["00", "02","25"],
+                        "SX980_07": ["04", "06"]}
                     },
                 "ZG{2}": {
                     "ZGName": "myZG2",
                     "Exphys":{
-                        "SAS_ConnectionB": ["00", "02", "25"],
-                        "SX890_15": ["04" ,"06"]}
+                        "SAS_ConnectionBlade_06": ["00", "02", "25"],
+                        "SX980_15": ["04" ,"06"]}
                     }
             },
 
         "ZSs":{
                 "ZS{1}":{
                     "ZSName": "myZoneset1",
-                    "mappings": [["myZG1", "myZG2"], ["myZG2", "myZG2"]],
+                    "mappings": [["myZG1", "myZG1"], ["myZG2", "myZG2"]],
                     "password": ""
                 }
         }
@@ -31,14 +31,14 @@
                 "ZG{1}":{
                     "ZGName": "7mada",
                     "Exphys":{
-                        "SAS_ConnectionB": ["00", "02","25"],
-                        "SX890_7": ["04", "06"]}
+                        "SAS_ConnectionBlade_05": ["00", "02","25"],
+                        "SX980_07": ["04", "06"]}
                     },
                 "ZG{2}": {
                     "ZGName": "ex",
                     "Exphys":{
-                        "SAS_ConnectionB": ["00", "02", "25"],
-                        "SX890_15": ["04" ,"06"]}
+                        "SAS_ConnectionBlade_05": ["00", "02", "25"],
+                        "SX980_15": ["04" ,"06"]}
                     }
                 }
             },
