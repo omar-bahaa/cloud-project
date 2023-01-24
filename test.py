@@ -6,7 +6,7 @@ connnection_server = ConnectionServer(ip="10.110.3.3")
 connnection_server.load_config("jsons/connection.json")
 connnection_server.connect()
 
-sas5_server = SASManager(rackNumber=4, ip="192.168.4.11")
+sas5_server = SASManager(rackNumber=4, ip="192.168.4.15")
 
 
 sas5_server.load_config("jsons/connection.json")
@@ -33,12 +33,12 @@ sas5_server.invoke_shell()
 
 
 # newzg=ZoneGroup("ZGDelete")
-# print(newzg.name)
-newzoneset=ZoneSet("Manual_Zone_Set")
-print(newzoneset.name)
-# sas5_server.importZoneGroup(newzg)
-sas5_server.importZoneSet(newzoneset)
-sas5_server.activateZoneSet(newzoneset)
+# # print(newzg.name)
+# newzoneset=ZoneSet("Manual_Zone_Set")
+# print(newzoneset.name)
+# # sas5_server.importZoneGroup(newzg)
+# sas5_server.importZoneSet(newzoneset)
+# sas5_server.activateZoneSet(newzoneset)
 
 # sas5_server.renameZoneGroup(x,"newNameZG")
 # sas5_server.renameZoneSet(y,"newNameZS")
@@ -46,6 +46,17 @@ sas5_server.activateZoneSet(newzoneset)
 # print(sas5_server.allZonegroups)
 # sas5_server.deleteZoneSet(newzoneset)
 # print(sas5_server.allZonesets)
+
+
+#Testing the read from JSONs and Executors
+print(sas5_server.allZonegroups)
+print(sas5_server.allZonesets)
+dataFilePath="jsons/sas.json"
+sas5_server.passToExecutors(dataFilePath)
+sas5_server.executeZoneGroupsConfig()
+print(sas5_server.allZonegroups)
+sas5_server.executeZoneSetsConfig()
+print(sas5_server.allZonesets)
 
 
 connnection_server.close_connection()
