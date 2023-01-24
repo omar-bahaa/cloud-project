@@ -149,22 +149,28 @@ class SASManager(Viewer):
    #//////////////////////////////////////////////////////
     def get_zonegroup(self):
         output_names = self.showZonegroup()
-        ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", output_names, flags=re.S)
-        ZGs_list = ZGs[0].strip().split("\n") # list of all zonegroup names
-        for zonegr in range(len(ZGs_list)):
-            output_zgs = self.showZonegroupData(ZGs_list[zonegr])
-            zonegroup = ZoneGroup(ZGs_list[zonegr])
-            exphy = re.findall(r"^.*?-{8,}\n"+ZGs_list[zonegr]+r":\n(.*?)$", output_zgs, flags=re.S)
-            exphy = exphy[0].strip().split("\n")
+        with open("zonegrs.text", "w") as f:
+            f.write(output_names)
+        with open("zonegrs.text", "r") as f:
+            ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", f.read()[:-len("\nSDMCLI>")], flags=re.S)
+            ZGs_list = ZGs[0].strip().split("\n") # list of all zonegroup names
+            
+        for zonegr in ZGs_list:
+            output_zgs = self.showZonegroupData(zonegr)
+            zonegroup = ZoneGroup(zonegr)
+    
+            with open("zonegr.text", "w") as f:
+                f.write(output_zgs)
+            with open("zonegr.text", "r") as f:
+                exphy = re.findall(r"^.*?-{8,}\n"+zonegr+r":\n(.*?)$", f.read()[:-len("\nSDMCLI>")].strip(), flags=re.S)
+                if exphy:
+                    exphy = exphy[0].strip().split("\n")
             for i in range(len(exphy)):
-                exphy[i] = exphy[i].strip().split(":")
-                expander, phys = exphy[i][0].strip(), exphy[i][1].strip().split()
-                zonegroup.addToZoneGroup({expander: phys})
-                # exphy[i][0] = expander
-                # exphy[i][1] = phys
-            # ZGs_list[zonegr] = [ZGs_list[zonegr], exphy]
-        # self.ZG_list = ZGs_list
-        # return self.ZGs_list # [[zonegroup_name, [exp,[phys]]]]
+                if exphy[i]:
+                    expanderphysep = exphy[i].strip().split(":")
+                    expander, phys = expanderphysep[0].strip(), expanderphysep[1].strip().split()
+                    zonegroup.addToZoneGroup({expander: phys})
+            self.allZonegroups[zonegr] = zonegroup
         return
     
      
