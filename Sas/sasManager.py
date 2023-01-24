@@ -66,6 +66,7 @@ class SASManager(Viewer):
             raise Exception("Can't rename: another zonegroup already exists with this name")
         command = ZoneGroup.rename_zonegr_command(zonegroup.name, newZoneGroupName)
         self.sendAndCaptureCommandWithObject(command, zonegroup)
+        self.allZonegroups[newZoneGroupName] = self.allZonegroups.pop(zonegroup.name)
         zonegroup.name = newZoneGroupName
         return 0
     
@@ -76,6 +77,7 @@ class SASManager(Viewer):
             raise Exception("Can't rename: another zoneset already exists with this name")
         command = ZoneSet.rename_zones_command(zoneset.name, newZoneSetName)
         self.sendAndCaptureCommandWithObject(command, zoneset)
+        self.allZonesets[newZoneSetName] = self.allZonesets.pop(zoneset.name)
         zoneset.name = newZoneSetName
         return 0
     
