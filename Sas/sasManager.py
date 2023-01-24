@@ -111,39 +111,42 @@ class SASManager(Viewer):
         self.activeZoneset = zoneset
         return 0
     
-   #//////////////////////////////////////////////////////
-    def readZoneGroupsFromJson(self, dataFilePath):
+    def passToExecutors(self,dataFilePath):
         confData = self.readJson(dataFilePath)
-        ZGs = confData[self.sasIP]["ZGs"]
-        AllZoneGroups = ZGs["ZoneGroups"]
-        for zg in AllZoneGroups.keys():
-            name = AllZoneGroups[zg]["ZGName"]
-            exphys = AllZoneGroups[zg]["Exphys"]
-            if name in self.allZonegroups.keys():
-                self.allZonegroups[name].clear()
+        self.AllZoneGroupsData = confData[self.ip]["ZGs"]
+        self.activeZoneSetNameData= confData[self.ip]["ActiveZoneset"]
+        self.clearBeforeConfigData=confData[self.ip]["clearBeforeConfig"]
+        self.AllZonesetsData = confData[self.ip]["ZSs"]
+        if self.clearBeforeConfigData=="1":
+            self.deleteAllZoneGroups()
+            self.deleteAllZoneSets()
+
+
+    def executeZoneGroupsConfig(self):
+        for zg in self.AllZoneGroupsData.keys():
+            ZGName = self.AllZoneGroupsData[zg]["ZGName"]
+            exphys = self.AllZoneGroupsData[zg]["Exphys"]
+            print(exphys)
+            if ZGName in self.allZonegroups.keys(): 
+                raise Exception("zonegroup already exists")
             else:
-                zonegroup = self.createZoneGroup(name)
-            for expander, phys in exphys.items():
-                zonegroup.addToZoneGroup(expander, phys)
+                zonegroup = self.createZoneGroup(ZGName)
+                zonegroup.addToZoneGroup(exphys)
         return
  
-   #//////////////////////////////////////////////////////
-    def readZoneSetsFromJson(self, dataFilePath):
-        confData = self.readJson(dataFilePath)
-        ZSs = confData[self.sasIP]["ZSs"]
-        activeZoneSetName = ZSs["Active"]
-        if activeZoneSetName not in self.allZonesets.keys():
-            self.createZoneSet(activeZoneSetName)
-        self.activateZoneSet(self.allZonesets[activeZoneSetName])
-        zonesets = ZSs["ZoneSets"]
-        for zoneset in zonesets.keys():
-            ZSname = zonesets[zoneset]["ZSName"]
+    def executeZoneSetsConfig(self):
+        # if self.activeZoneSetNameData not in self.allZonesets.keys():
+        #     self.createZoneSet(self.activeZoneSetNameData)
+      
+        for zoneset in self.AllZonesetsData.keys():
+            ZSname = self.AllZonesetsData[zoneset]["ZSName"]
             if ZSname in self.allZonesets.keys():
-                self.allZonesets[ZSname].clear()
+                raise Exception("zoneset already exists")
             else:
                 myZoneset = self.createZoneSet(ZSname)
-            for mapping in zonesets[zoneset]["mappings"]:
+            for mapping in self.AllZonesetsData[zoneset]["mappings"]:
                 myZoneset.addZoneGroupPairToZoneSet(mapping[0],mapping[1])
+        self.activateZoneSet(self.allZonesets[self.activeZoneSetNameData])
         return
  
    #//////////////////////////////////////////////////////

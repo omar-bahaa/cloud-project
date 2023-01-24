@@ -1,30 +1,28 @@
-{   "sas{1}IP": {
+{   "192.168.4.15": {
+    "clearBeforeConfig":"1",
+    "ActiveZoneset": "myZoneset1",
         "ZGs":{
-            "ZoneGroups": {
+
                 "ZG{1}":{
-                    "ZGName": "7mada",
+                    "ZGName": "myZG1",
                     "Exphys":{
                         "SAS_ConnectionB": ["00", "02","25"],
                         "SX890_7": ["04", "06"]}
                     },
                 "ZG{2}": {
-                    "ZGName": "ex",
+                    "ZGName": "myZG2",
                     "Exphys":{
                         "SAS_ConnectionB": ["00", "02", "25"],
                         "SX890_15": ["04" ,"06"]}
                     }
-                }
             },
 
         "ZSs":{
-            "Active": "ZSName",
-            "ZoneSets":{
                 "ZS{1}":{
-                    "ZSName": "esmha",
-                    "mappings": [["7amada", "ex"], ["7amada", "7amada"]],
-                    "password": ";oiashf;oi"
+                    "ZSName": "myZoneset1",
+                    "mappings": [["myZG1", "myZG2"], ["myZG2", "myZG2"]],
+                    "password": ""
                 }
-            }
         }
     },
     "sas{2}IP":{

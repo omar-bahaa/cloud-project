@@ -64,12 +64,12 @@ class ZoneSet():
             return 0
         
     def addZoneGroupPairToZoneSet(self, zoneGroupA, zoneGroupB):
-        self.zonegroupPairsSetofSets.add(frozenset(zoneGroupA, zoneGroupB))
+        self.zonegroupPairsSetofSets.add(frozenset({zoneGroupA, zoneGroupB}))
         return 0
 
     def removeZonegroupPairFromZoneset(self, zoneGroupA, zoneGroupB):
-        if frozenset(zoneGroupA,zoneGroupB) in self.zonegroupPairsSetofSets:
-            self.zonegroupPairsSetofSets.remove(frozenset(zoneGroupA,zoneGroupB))
+        if frozenset({zoneGroupA,zoneGroupB}) in self.zonegroupPairsSetofSets:
+            self.zonegroupPairsSetofSets.remove(frozenset({zoneGroupA,zoneGroupB}))
             return 0
 
     def addCommand(self, command):
