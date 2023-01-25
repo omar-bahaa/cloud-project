@@ -3,7 +3,7 @@ import json
 
 
 class ConnectionServer(object):
-    def __init__(self, ip):
+    def __init__(self, ip=""):
         self.transport=None
         self.ip = ip
         super().__init__()
@@ -12,6 +12,7 @@ class ConnectionServer(object):
     def load_config(self, json_filepath: str) -> None:
         with open(json_filepath, "rb") as f:
             conf = json.load(f)
+        self.ip = conf["connection_server_ip"]
         self.__username=conf["connection_server_username"]
         self.__password=conf["connection_server_password"]
     

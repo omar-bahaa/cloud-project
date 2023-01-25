@@ -1,0 +1,50 @@
+{
+    "192.168.4.15": {
+        "clearBeforeConfig": "1",
+        "ActiveZoneset": "myZoneset1",
+        "ZGs": {
+            "ZG1": {
+                "ZGName": "myZG2",
+                "Exphys": {
+                    "SAS_ConnectionBlade_06": [
+                        "00",
+                        "02",
+                        "25"
+                    ],
+                    "SX980_15": [
+                        "04",
+                        "06"
+                    ]
+                }
+            },
+            "ZG2": {
+                "ZGName": "myZG2",
+                "Exphys": {
+                    "SAS_ConnectionBlade_06": [
+                        "00",
+                        "02",
+                        "25"
+                    ],
+                    "SX980_15": [
+                        "04",
+                        "06"
+                    ]
+                }
+            }
+        },
+        "ZSs": {
+            "ZG1": {
+                "ZSName": "myZoneset1",
+                "mappings": [
+                    [
+                        "myZG1"
+                    ],
+                    [
+                        "myZG2"
+                    ]
+                ],
+                "password": ""
+            }
+        }
+    }
+}
