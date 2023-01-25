@@ -165,7 +165,6 @@ class SASManager(Viewer):
         self.activateZoneSet(self.allZonesets[self.activeZoneSetNameData])
         return
  
-   #////////////////////////////////////////////////////// works fine
     def get_zonegroups(self):
         output_names = self.showZonegroup()
         with open("zonegrs.text", "w") as f:
@@ -193,7 +192,6 @@ class SASManager(Viewer):
         return
     
      
-   #//////////////////////////////////////////////////////
     def get_zonesets(self):
         zsnames = self.showZoneset()
         with open("zones.text", "w") as f:
@@ -202,10 +200,11 @@ class SASManager(Viewer):
             ZSs = re.findall(r"^.*?-{8,}\n(.*?)$", f.read()[:-len("\nSDMCLI>")], flags=re.S)
             ZSs_list = ZSs[0].strip().split("\n")
         for zonesetname in ZSs_list:
+            zoneset = ZoneSet(zonesetname)
             if zonesetname.endswith("*"):
                 zonesetname = zonesetname[:-1]
-                active = zonesetname
-            zoneset = ZoneSet(zonesetname)
+                zoneset.name = zonesetname
+                self.activateZoneSet(zoneset)
             zonesetdata = self.showZonesetData(zonesetname)
             with open("zoneset.text", "w") as f:
                 f.write(zonesetdata)
@@ -222,7 +221,6 @@ class SASManager(Viewer):
                         self.addZonegroupsToZoneSet(zoneset, x[0], zg2)
             self.allZonesets[zonesetname] = zoneset
         return  
-        # [[zoneset_name, {{zg1, zg2}}]]
      
    #//////////////////////////////////////////////////////
     def readJson(self, dataFilePath):
