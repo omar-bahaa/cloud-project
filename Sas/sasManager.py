@@ -175,7 +175,8 @@ class SASManager(Viewer):
                         self.addZonegroupsToZoneSet(myZoneset,mapping[0],mapping[1])
         self.activateZoneSet(self.allZonesets[self.activeZoneSetNameData])
         return 0
-    def saveSasStatetoJson(self):
+    
+    def saveSasStatetoJson(self, filePath):
         dictionaryToDumpLevel1={} #ip address key: clearBeforeConfig, ActiveZoneset, "ZGs": dict of zonegroups and "ZSs": dict of zonesets as values
         
         zonegroupsDict={} #dictionary of dictionaries of zonegropus as values "ZG{#numOfZoneGroup}":one zonegroup dictionary
@@ -204,7 +205,7 @@ class SASManager(Viewer):
             zonesetNumber+=1
             
         dictionaryToDumpLevel1[self.ip]={"clearBeforeConfig":self.clearBeforeConfigData,"ActiveZoneset":self.activeZoneset.name,"ZGs":zonegroupsDict,"ZSs":zonesetsDict}
-        filePath = "jsons/sas2.json"  
+        filePath = filePath
         with open(filePath, "w") as outfile:
             json.dump(dictionaryToDumpLevel1, outfile,indent=4)
 

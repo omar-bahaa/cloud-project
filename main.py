@@ -26,7 +26,7 @@ redirection = True
 if redirection:                                    # if user used redirection, we capture what they did and save it to json for future use
     sas5_server.get_zonegroups()
     sas5_server.get_zonesets()
-    # save to json @lamiaa
+    sas5_server.saveSasStatetoJson(SASSAVEDJSONFILEPATH)
 else:                                              # if user didn't use redirection, we read from json the sas configurations and execute them
     sas5_server.passToExecutors(SASJSONFILEPATH)
     sas5_server.executeZoneGroupsConfig()
