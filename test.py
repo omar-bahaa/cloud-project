@@ -49,8 +49,8 @@ sas5_server.invoke_shell()
 
 
 #Testing the read from JSONs and Executors
-print(sas5_server.allZonegroups)
-print(sas5_server.allZonesets)
+# print(sas5_server.allZonegroups)
+# print(sas5_server.allZonesets)
 # dataFilePath="jsons/sas.json"
 # sas5_server.passToExecutors(dataFilePath)
 # sas5_server.executeZoneGroupsConfig()
@@ -60,8 +60,9 @@ print(sas5_server.allZonesets)
 sas5_server.get_zonegroups()
 sas5_server.get_zonesets()
 
-print(sas5_server.allZonegroups)
-print(sas5_server.allZonesets)
+
+# print(sas5_server.allZonegroups)
+# print(sas5_server.allZonesets)
 
 for zg in sas5_server.allZonegroups.values():
     print(zg.name, zg.parentExpanderToPhysPorts)

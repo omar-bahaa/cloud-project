@@ -14,6 +14,7 @@ class SASManager(Viewer):
         self.activeZoneset = None
         self.__ZoneConfigPassword = ZoneConfigPassword
         super().__init__(ip=ip, rackNumber=rackNumber)
+        self.clearBeforeConfigData="0"
 
     def addPhysToZoneGroup(self,zonegroup,exphys):
         if not zonegroup.name in self.allZonegroups.keys():
@@ -23,23 +24,27 @@ class SASManager(Viewer):
                 command = ZoneGroup.add_zonegr_command(zonegroup.name, expander, phys)
                 self.sendAndCaptureCommandWithObject(command, zonegroup)
         zonegroup.addToZoneGroup(exphys)
+        return 0
         
 
     def addZonegroupsToZoneSet(self, zoneset: ZoneSet, ZG1, ZG2):
         command = ZoneSet.add_zones_command(zoneset, ZG1, ZG2)
         self.sendAndCaptureCommandWithObject(command, zoneset)
-        zoneset.addZoneGroupPairToZoneSet(ZG1, ZG2)
+        zoneset.addZoneGroupPairToZoneSet(ZG1,ZG2)
+        return 0
         
         
     def importZoneGroup(self, zonegroup:ZoneGroup):
         if zonegroup.name in self.allZonegroups.keys():
             raise Exception("Zonegroup already exists")
         self.allZonegroups[zonegroup.name] = zonegroup
+        return 0
 
     def importZoneSet(self, zoneset:ZoneSet):
         if zoneset.name in self.allZonesets.keys():
             raise Exception("Zoneset already exists")
         self.allZonesets[zoneset.name] = zoneset
+        return 0
     
     def createZoneGroup(self, zgName) -> ZoneGroup:
         if zgName in self.allZonegroups.keys():
@@ -107,6 +112,7 @@ class SASManager(Viewer):
         for _, zonegroup in self.allZonegroups.items():
             del zonegroup
         self.allZonegroups.clear()
+        return 0
     
     def deleteAllZoneSets(self):
         command = ZoneSet.delete_all_zones_command
@@ -114,6 +120,7 @@ class SASManager(Viewer):
         for _, zoneset in self.allZonesets.items():
             del zoneset
         self.allZonesets.clear()
+        return 0
     
     def deactivateZoneSet(self):
         command = ZoneSet.deact_zones_command(self.__ZoneConfigPassword)
@@ -138,6 +145,7 @@ class SASManager(Viewer):
         if self.clearBeforeConfigData=="1":
             self.deleteAllZoneGroups()
             self.deleteAllZoneSets()
+        return 0
 
 
     def executeZoneGroupsConfig(self):
@@ -150,7 +158,7 @@ class SASManager(Viewer):
             else:
                 zonegroup = self.createZoneGroup(ZGName)
                 self.addPhysToZoneGroup(zonegroup,exphys)
-        return
+        return 0
  
     def executeZoneSetsConfig(self):
         for zoneset in self.AllZonesetsData.keys():
@@ -161,9 +169,52 @@ class SASManager(Viewer):
                 myZoneset = self.createZoneSet(ZSname)
                 for mapping in self.AllZonesetsData[zoneset]["mappings"]:
                     print(mapping)
-                    self.addZonegroupsToZoneSet(myZoneset,mapping[0],mapping[1])
+                    if len(mapping) == 1:
+                        self.addZonegroupsToZoneSet(myZoneset,mapping[0],mapping[0])
+                    else:
+                        self.addZonegroupsToZoneSet(myZoneset,mapping[0],mapping[1])
         self.activateZoneSet(self.allZonesets[self.activeZoneSetNameData])
-        return
+        return 0
+    def saveSasStatetoJson(self):
+        dictionaryToDumpLevel1={} #ip address key: clearBeforeConfig, ActiveZoneset, "ZGs": dict of zonegroups and "ZSs": dict of zonesets as values
+        
+        zonegroupsDict={} #dictionary of dictionaries of zonegropus as values "ZG{#numOfZoneGroup}":one zonegroup dictionary
+        oneZonegroupDict={} #one zonegroup dictionary has
+                                  # "ZGName" key: zonegroup name value, "Exphys" key: dict of expnd to phys list value
+        
+        zonesetsDict={}#zonesets dict "ZSs" key: dictionaries of zonegropus as values "ZS{#numOfZoneGroup}":one zoneset dictionary
+        oneZonesetDict={}#one zoneset dictionary has
+                                  # "ZSName" key: zoneset name value, "mappings" key:  mappings list of lists value, "password": ""
+        
+        zonegroupNumber=1
+        for zonegroup in self.allZonegroups.keys():
+            zonegroupObject=self.allZonegroups[zonegroup]
+            oneZonegroupDict["ZGName"]=zonegroupObject.name
+            oneZonegroupDict["Exphys"]={k:list(v) for k, v in zonegroupObject.parentExpanderToPhysPorts.items()}
+            zonegroupsDict[f"ZG{zonegroupNumber}"]=oneZonegroupDict
+            zonegroupNumber+=1
+
+        zonesetNumber=1
+        for zoneset in self.allZonesets.keys():
+            zonesetObject=self.allZonesets[zoneset]
+            oneZonesetDict["ZSName"]=zonesetObject.name
+            oneZonesetDict["mappings"]=list(map(list, zonesetObject.zonegroupPairsSetofSets))
+            oneZonesetDict["password"]=""
+            zonesetsDict[f"ZS{zonesetNumber}"]=oneZonesetDict
+            zonesetNumber+=1
+            
+        dictionaryToDumpLevel1[self.ip]={"clearBeforeConfig":self.clearBeforeConfigData,"ActiveZoneset":self.activeZoneset.name,"ZGs":zonegroupsDict,"ZSs":zonesetsDict}
+        filePath = "jsons/sas2.json"  
+        with open(filePath, "w") as outfile:
+            json.dump(dictionaryToDumpLevel1, outfile,indent=4)
+
+        # self.jsonObjectToDump= json.dumps(dictionaryToDumpLevel1, indent=4)
+        
+            
+        # with open(filePath , 'w') as file:
+        #     json.dump(self.jsonObjectToDump, file, indent=4)
+        #     return 0
+ 
  
     def get_zonegroups(self):
         output_names = self.showZonegroup()
@@ -229,6 +280,5 @@ class SASManager(Viewer):
         return data
  
    #//////////////////////////////////////////////////////
-    def saveSasStatetoJson(self, json_filepath):
-        pass
+
     
