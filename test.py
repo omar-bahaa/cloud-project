@@ -6,7 +6,7 @@ connnection_server = ConnectionServer(ip="10.110.3.3")
 connnection_server.load_config("jsons/connection.json")
 connnection_server.connect()
 
-sas5_server = SASManager(rackNumber=4, ip="192.168.4.15")
+sas5_server = SASManager(rackNumber=4, ip="192.168.4.11")
 
 
 sas5_server.load_config("jsons/connection.json")
@@ -51,13 +51,25 @@ sas5_server.invoke_shell()
 #Testing the read from JSONs and Executors
 print(sas5_server.allZonegroups)
 print(sas5_server.allZonesets)
-dataFilePath="jsons/sas.json"
-sas5_server.passToExecutors(dataFilePath)
-sas5_server.executeZoneGroupsConfig()
+# dataFilePath="jsons/sas.json"
+# sas5_server.passToExecutors(dataFilePath)
+# sas5_server.executeZoneGroupsConfig()
+# print(sas5_server.allZonegroups)
+# sas5_server.executeZoneSetsConfig()
+# print(sas5_server.allZonesets)
+sas5_server.get_zonegroups()
+sas5_server.get_zonesets()
+
 print(sas5_server.allZonegroups)
-sas5_server.executeZoneSetsConfig()
 print(sas5_server.allZonesets)
 
+for zg in sas5_server.allZonegroups.values():
+    print(zg.name, zg.parentExpanderToPhysPorts)
+
+for zs in sas5_server.allZonesets.values():
+    print(zs.name, zs.zonegroupPairsSetofSets)
+
+print(sas5_server.activeZoneset.name)
 
 connnection_server.close_connection()
 sas5_server.close_connection()
