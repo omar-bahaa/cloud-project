@@ -25,10 +25,10 @@ class SASManager(Viewer):
         zonegroup.addToZoneGroup(exphys)
         
 
-    def addZonegroupsToZoneSet(self,zoneset,ZG1,ZG2):
-        command = ZoneSet.add_zones_command(zoneset,ZG1,ZG2)
+    def addZonegroupsToZoneSet(self, zoneset: ZoneSet, ZG1, ZG2):
+        command = ZoneSet.add_zones_command(zoneset, ZG1, ZG2)
         self.sendAndCaptureCommandWithObject(command, zoneset)
-        zoneset.addZoneGroupPairToZoneSet(ZG1,ZG2)
+        zoneset.addZoneGroupPairToZoneSet(ZG1, ZG2)
         
         
     def importZoneGroup(self, zonegroup:ZoneGroup):
@@ -165,15 +165,15 @@ class SASManager(Viewer):
         self.activateZoneSet(self.allZonesets[self.activeZoneSetNameData])
         return
  
-   #//////////////////////////////////////////////////////
-    def get_zonegroup(self):
+   #////////////////////////////////////////////////////// works fine
+    def get_zonegroups(self):
         output_names = self.showZonegroup()
         with open("zonegrs.text", "w") as f:
             f.write(output_names)
         with open("zonegrs.text", "r") as f:
             ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", f.read()[:-len("\nSDMCLI>")], flags=re.S)
             ZGs_list = ZGs[0].strip().split("\n") # list of all zonegroup names
-            
+    
         for zonegr in ZGs_list:
             output_zgs = self.showZonegroupData(zonegr)
             zonegroup = ZoneGroup(zonegr)
@@ -194,24 +194,33 @@ class SASManager(Viewer):
     
      
    #//////////////////////////////////////////////////////
-    def get_zoneset(self):
+    def get_zonesets(self):
         zsnames = self.showZoneset()
-        ZSs = re.findall(r"^.*?-{8,}\n(.*?)$", zsnames, flags=re.S)
-        ZSs_list = ZSs[0].strip().split("\n")
-        
-        for zones in range(len(ZSs_list)):
-            zonesetName=ZSs_list[zones]
-            zoneset=ZoneSet(zonesetName)
-            mappings = self.showZonesetData(zonesetName)
-            mappings = re.findall(r"^.*?-{8,}\n"+zonesetName+r".*:\n(.*?)$", mappings, flags=re.S)
-            mappings = mappings[0].strip().split('\n')
+        with open("zones.text", "w") as f:
+            f.write(zsnames)
+        with open("zones.text", "r") as f:
+            ZSs = re.findall(r"^.*?-{8,}\n(.*?)$", f.read()[:-len("\nSDMCLI>")], flags=re.S)
+            ZSs_list = ZSs[0].strip().split("\n")
+        for zonesetname in ZSs_list:
+            if zonesetname.endswith("*"):
+                zonesetname = zonesetname[:-1]
+                active = zonesetname
+            zoneset = ZoneSet(zonesetname)
+            zonesetdata = self.showZonesetData(zonesetname)
+            with open("zoneset.text", "w") as f:
+                f.write(zonesetdata)
+            with open("zoneset.text", "r") as f:
+                mappings = re.findall(r"^.*?-{8,}\n"+zonesetname+r".*:\n(.*?)$", f.read()[:-len("\nSDMCLI>")], flags=re.S)
+                if mappings:
+                    mappings = mappings[0].strip().split('\n')
             zl = set()
-            for map in range(len(mappings)):
-                x = mappings[map].strip().split(":")
-                if x[0] in ZoneGroup.allZonegroups:
+            for map in mappings:
+                x = map.strip().split(":")
+                if x[0] in self.allZonegroups.keys():
                     zg2_list = x[1].strip().split(" ")
                     for zg2 in zg2_list:
-                        zoneset.addZoneGroupPairToZoneSet(x[0], zg2)
+                        self.addZonegroupsToZoneSet(zoneset, x[0], zg2)
+            self.allZonesets[zonesetname] = zoneset
         return  
         # [[zoneset_name, {{zg1, zg2}}]]
      
