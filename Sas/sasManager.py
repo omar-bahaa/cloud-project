@@ -8,7 +8,7 @@ from Sas.sasConfigurator import ZoneSet, ZoneGroup
 # We shouldn't make the zonegroup and zoneset classes connect to the sas every time we create a new instance of them,
 # only the master shall send the commands to the sas
 class SASManager(Viewer):
-    def __init__(self, rackNumber, ip, ZoneConfigPassword="") -> None:
+    def __init__(self, ip, rackNumber=None, ZoneConfigPassword="") -> None:
         self.allZonegroups = {}
         self.allZonesets = {}
         self.activeZoneset = None

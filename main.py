@@ -1,21 +1,40 @@
-# from backEnd.Interpreter import *
-# from backEnd.ZonesConfig import *
-# from backEnd.ZonesViewr import *
-# from backEnd.sas import *
 from conf import *
 from kickstart.configurate import *
-# connect to connection server
+from Sas.sasManager import SASManager
+from ConnectionServer.ConnectionServer import ConnectionServer
 
-# connect to sas
+# ------------------------------------------------------------------------------------------------------------------------
+# connecting to connection server and sas
 
-# read sas json and get zonegroups and zonesets
-# SASConigurator.readZoneGroupsFromJson(json_filepath="scheme.json")
+connnection_server = ConnectionServer()
+connnection_server.load_config(CONNECTIONJSONFILEPATH)
+connnection_server.connect()
 
-# make object of zonegroups and zonesets from json with each's exphys and zonegroup pairs for zonegroups and zonesets respectively.
+sas5_server = SASManager(ip=SAS5IP)
+sas5_server.load_config(CONNECTIONJSONFILEPATH)
 
-# send needed commands to sas to make the above
+connection_sas5_channel = connnection_server.make_channel(dest_addr=(sas5_server.ip, 22), src_addr=("127.0.0.1", 1234))
+sas5_server.initalize_connection(connection_sas5_channel)   # makes connection using channel and invokes shell
+# ------------------------------------------------------------------------------------------------------------------------
+# GUI stuff here
+redirection = True
 
+
+# ------------------------------------------------------------------------------------------------------------------------
+# configuring sas
+
+if redirection:                                    # if user used redirection, we capture what they did and save it to json for future use
+    sas5_server.get_zonegroups()
+    sas5_server.get_zonesets()
+    # save to json @lamiaa
+else:                                              # if user didn't use redirection, we read from json the sas configurations and execute them
+    sas5_server.passToExecutors(SASJSONFILEPATH)
+    sas5_server.executeZoneGroupsConfig()
+    sas5_server.executeZoneSetsConfig()
+
+# ------------------------------------------------------------------------------------------------------------------------
 # kickstart, pxe, dnsmasq
+
 kickstart = Configurate(ksfile=KSFILEPATH, dnsmasqfile=DNSMASQFILEPATH, pxefile=PXEFILEPATH)
 kickstart.process(json_filepath=KICKSTARTJSONFILEPATH)
 
