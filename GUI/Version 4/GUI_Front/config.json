@@ -20,6 +20,7 @@
     "serverNames_SAS": "",
     "basicKickstartConfigurations": "",
     "hardiskToServerAssociationMatrix": "",
+    "activeZoneSet": "omar",
     "fileSystemType": "",
     "isRAID": "",
     "RAIDLevel": "",

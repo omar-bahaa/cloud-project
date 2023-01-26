@@ -12,10 +12,14 @@ import webbrowser
 from PyQt5 import QtCore, QtGui, QtWidgets
 from group_zone import group_Ui_Form
 from set_zone import set_Ui_Form
+from PyQt5.QtCore import QCoreApplication
+
 '''
 1. putting it one by one is not easy but will ease the edit
 '''
 class Ui_MainWindow_a(object):
+    def __init__(self) -> None:
+        self.zone_list = []
 
     def group_clicked(self):
         self.window = QtWidgets.QWidget()
@@ -45,14 +49,19 @@ class Ui_MainWindow_a(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         spacerItem = QtWidgets.QSpacerItem(35, 15, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem, 2, 0, 1, 1)
+
         self.Close = QtWidgets.QPushButton(self.centralwidget)
         self.Close.setObjectName("Close")
         self.gridLayout_2.addWidget(self.Close, 3, 1, 1, 1)
+
+
         self.FinishButton = QtWidgets.QPushButton(self.centralwidget)
         self.FinishButton.setObjectName("finishButton")
         #edit 1 
         self.FinishButton.clicked.connect(self.button_clicked)
-        
+        self.Close.clicked.connect(QCoreApplication.instance().quit)
+
+
         self.gridLayout_2.addWidget(self.FinishButton, 2, 1, 1, 1)
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         font = QtGui.QFont()
@@ -492,7 +501,7 @@ class Ui_MainWindow_a(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+        
         
 
 
@@ -500,6 +509,7 @@ class Ui_MainWindow_a(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Cloud Automation"))
         self.Close.setText(_translate("MainWindow", "Close"))
+
         self.FinishButton.setText(_translate("MainWindow", "Finish"))
         self.label_9.setText(_translate("MainWindow", "numberOfServers"))
         self.label_10.setText(_translate("MainWindow", "dictionaryOfServerNamesAndMACAddresses"))
@@ -588,7 +598,8 @@ class Ui_MainWindow_a(object):
         serverNames_SAS = self.textEdit_17.toPlainText()
         basicKickstartConfigurations = self.textEdit_19.toPlainText()
         hardiskToServerAssociationMatrix = self.textEdit_18.toPlainText()
-        activeZoneSet = self.textEdit_70.toplainText()
+        activeZoneSet = self.textEdit_70.toPlainText()
+        self.zone_list.append(activeZoneSet)
 
         #OS
         fileSystemType = self.textEdit_46.toPlainText()
@@ -638,6 +649,7 @@ class Ui_MainWindow_a(object):
                         'serverNames_SAS': serverNames_SAS,
                         'basicKickstartConfigurations': basicKickstartConfigurations,
                         'hardiskToServerAssociationMatrix': hardiskToServerAssociationMatrix,
+                        'activeZoneSet': self.zone_list[-1], 
 
                         'fileSystemType': fileSystemType, 
                         'isRAID': isRAID,
@@ -663,7 +675,7 @@ class Ui_MainWindow_a(object):
 
 
         json_object = json.dumps(dictionary, indent=4)
-        with open("config.json", "w") as outfile:
+        with open("config.json", "w+") as outfile:
             outfile.write(json_object)
 
 

@@ -31,28 +31,33 @@ class group_Ui_Form(object):
         self.label_3.setText("")
         self.label_3.setObjectName("label_3")
 
+        #number of the rack 
+        self.textEdit0 = QtWidgets.QTextEdit(Form)
+        self.textEdit0.setGeometry(QtCore.QRect(190, 105, 231, 21))
+        self.textEdit0.setObjectName("textEdit0")
+
         #ZGName
         self.textEdit = QtWidgets.QTextEdit(Form)
-        self.textEdit.setGeometry(QtCore.QRect(190, 100, 231, 21))
+        self.textEdit.setGeometry(QtCore.QRect(190, 135, 231, 21))
         self.textEdit.setObjectName("textEdit")
         #SAS_ConnectA
         self.textEdit_2 = QtWidgets.QTextEdit(Form)
-        self.textEdit_2.setGeometry(QtCore.QRect(190, 140, 231, 21))
+        self.textEdit_2.setGeometry(QtCore.QRect(190, 165, 231, 21))
         self.textEdit_2.setObjectName("textEdit_2")
 
         #SAS ConnectB
         self.textEdit_3 = QtWidgets.QTextEdit(Form)
-        self.textEdit_3.setGeometry(QtCore.QRect(190, 180, 231, 21))
+        self.textEdit_3.setGeometry(QtCore.QRect(190, 195,231, 21))
         self.textEdit_3.setObjectName("textEdit_3")
 
         #SX890_7
         self.textEdit_4 = QtWidgets.QTextEdit(Form)
-        self.textEdit_4.setGeometry(QtCore.QRect(190, 220, 231, 21))
+        self.textEdit_4.setGeometry(QtCore.QRect(190, 225, 231, 21))
         self.textEdit_4.setObjectName("textEdit_4")
 
         #SX890_15
         self.textEdit_5 = QtWidgets.QTextEdit(Form)
-        self.textEdit_5.setGeometry(QtCore.QRect(190, 260, 231, 21))
+        self.textEdit_5.setGeometry(QtCore.QRect(190, 255, 231, 21))
         self.textEdit_5.setObjectName("textEdit_5")
 
 
@@ -63,6 +68,11 @@ class group_Ui_Form(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
+
+        #number of rack 
+        self.label_8 = QtWidgets.QLabel(self.widget)
+        self.label_8.setObjectName("label_8")
+        self.verticalLayout.addWidget(self.label_8)
 
         #ZGName
         self.label_2 = QtWidgets.QLabel(self.widget)
@@ -101,19 +111,23 @@ class group_Ui_Form(object):
         self.label_5.setText(_translate("Form", "SASConnectB"))
         self.label_6.setText(_translate("Form", "SX890_7"))
         self.label_7.setText(_translate("Form", "SX890_15"))
+        self.label_8.setText(_translate("Form", "rack number"))
 
     def button_clicked(self):
         print("created")
         #Translate them into text 
+        rackNumber = self.textEdit0.toPlainText()
+
         ZGName = self.textEdit.toPlainText() 
         SASConnectA = self.textEdit_2.toPlainText() 
         SASConnectB = self.textEdit_3.toPlainText()
         SX890_7 = self.textEdit_4.toPlainText()
         SX890_15 = self.textEdit_5.toPlainText()
 
+        group_zone_file = "GroupZones_{a}.json".format(a = rackNumber)
         #make a counter 
-        if os.path.exists("GroupZones.json"):
-            with open('GroupZones.json', 'r+') as f:
+        if os.path.exists(group_zone_file):
+            with open(group_zone_file, 'r+') as f:
                 data = json.load(f)
                 #print(data)
         else:
@@ -133,7 +147,7 @@ class group_Ui_Form(object):
         data["counter"]+=1
         json_object = json.dumps(data, indent=4)
     
-        with open("GroupZones.json", "w+") as outfile:
+        with open(group_zone_file, "w+") as outfile:
             outfile.write(json_object)
 
 if __name__ == "__main__":

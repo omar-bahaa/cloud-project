@@ -11,6 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import json
 import os
+#from gui_front import Ui_MainWindow_a
 
 class set_Ui_Form(object):
     def setupUi(self, Form):
@@ -31,20 +32,25 @@ class set_Ui_Form(object):
         self.label_3.setText("")
         self.label_3.setObjectName("label_3")
 
+        #number of the rack 
+        self.textEdit0 = QtWidgets.QTextEdit(Form)
+        self.textEdit0.setGeometry(QtCore.QRect(190, 100, 231, 21))
+        self.textEdit0.setObjectName("textEdit0")
+
+
         #ZSName
         self.textEdit = QtWidgets.QTextEdit(Form)
-        self.textEdit.setGeometry(QtCore.QRect(190, 100, 231, 21))
+        self.textEdit.setGeometry(QtCore.QRect(190, 150, 231, 21))
         self.textEdit.setObjectName("textEdit")
         #mapping
         self.textEdit_2 = QtWidgets.QTextEdit(Form)
-        self.textEdit_2.setGeometry(QtCore.QRect(190, 180, 231, 21))
+        self.textEdit_2.setGeometry(QtCore.QRect(190, 200, 231, 21))
         self.textEdit_2.setObjectName("textEdit_2")
 
         #password
         self.textEdit_3 = QtWidgets.QTextEdit(Form)
-        self.textEdit_3.setGeometry(QtCore.QRect(190, 260, 231, 21))
+        self.textEdit_3.setGeometry(QtCore.QRect(190, 250, 231, 21))
         self.textEdit_3.setObjectName("textEdit_3")
-
 
 
         self.widget = QtWidgets.QWidget(Form)
@@ -53,6 +59,11 @@ class set_Ui_Form(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
+
+        #number of rack 
+        self.label_6 = QtWidgets.QLabel(self.widget)
+        self.label_6.setObjectName("label_5")
+        self.verticalLayout.addWidget(self.label_6)
 
         #ZSName
         self.label_2 = QtWidgets.QLabel(self.widget)
@@ -82,34 +93,46 @@ class set_Ui_Form(object):
         self.label_2.setText(_translate("Form", "ZSName"))
         self.label_4.setText(_translate("Form", "mapping"))
         self.label_5.setText(_translate("Form", "password"))
+        self.label_6.setText(_translate("Form", "rack number"))
+
+        
         
 
     def button_clicked(self):
-        print("created")
         #Translate them into text 
+        rackNumber = self.textEdit0.toPlainText()
         ZSName = self.textEdit.toPlainText() 
         mapping = self.textEdit_2.toPlainText() 
         password = self.textEdit_3.toPlainText()
         
-        #make a counter 
-        #make a list of active (Home)
-        if os.path.exists("SetZones.json"):
-            with open('SetZones.json', 'r+') as f:
+        set_zone_file = "SetZones_{a}.json".format(a = rackNumber)
+        if os.path.exists(set_zone_file):
+            with open(set_zone_file, 'r+') as f:
                 data = json.load(f)
                 #print(data)
         else:
             data = {"counter": 0}
+
+        #edit 
+        if os.path.exists("config.json"):
+            with open("config.json", 'r+') as fl:
+                active_zone_file = json.load(fl)
+        active_list = active_zone_file["activeZoneSet"]
+
     
         
         my_json = {"ZSName": ZSName, "mapping": mapping,
         "password": password}
     
-
+        
         data[data["counter"]] = my_json
         data["counter"]+=1
+        data["activeZoneSet"] = active_list 
+
         json_object = json.dumps(data, indent=4)
-        with open("SetZones.json", "w+") as outfile:
+        with open(set_zone_file, "w+") as outfile:
             outfile.write(json_object)
+            
 
 if __name__ == "__main__":
     import sys
