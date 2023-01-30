@@ -2,7 +2,7 @@ import passlib.hash
 import json
 import netifaces as ni
 import re
-
+import os
 
 class Configurate:
     def __init__(self,ksfile,dnsmasqfile,pxefile):
@@ -78,6 +78,9 @@ class Configurate:
                 self.feedks()
                 self.feeddns()
                 self.feedpxe()
+    def restart_service(self):
+        os.system("sudo systemctl restart vsftpd.service ")
+        os.system("sudo systemctl restart dnsmasq")
 
 # myip = os.system("ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'")
 # myip = "10.110.12.216"
