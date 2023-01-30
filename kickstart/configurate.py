@@ -68,7 +68,9 @@ class Configurate:
             new_content2 = re.sub(r'ks=ftp:\/\/.*\/kick', f'ks=ftp://{self.myip}/kick', new_content1)
         with open(self.pxefile, 'w') as f:
             f.write(new_content2)
-
+    def restart_service(self):
+        os.system("sudo systemctl restart vsftpd.service ")
+        os.system("sudo systemctl restart dnsmasq")
     def process(self, json_filepath: str):
         regexp = re.compile(r'rootpw --iscrypted')
         with open(self.ksfile, 'r') as f:
@@ -78,9 +80,8 @@ class Configurate:
                 self.feedks()
                 self.feeddns()
                 self.feedpxe()
-    def restart_service(self):
-        os.system("sudo systemctl restart vsftpd.service ")
-        os.system("sudo systemctl restart dnsmasq")
+                self.restart_service()
+
 
 # myip = os.system("ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'")
 # myip = "10.110.12.216"
