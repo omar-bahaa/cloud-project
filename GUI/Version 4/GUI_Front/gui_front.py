@@ -18,27 +18,6 @@ from PyQt5.QtCore import QCoreApplication
 1. putting it one by one is not easy but will ease the edit
 '''
 class Ui_MainWindow_a(object):
-    def __init__(self) -> None:
-        self.zone_list = []
-
-    def group_clicked(self):
-        self.window = QtWidgets.QWidget()
-        self.ui = group_Ui_Form()
-        self.ui.setupUi(self.window)
-        self.window.show()
-        #print('Hi group')
-
-    def set_clicked(self):
-        self.setwindow = QtWidgets.QWidget()
-        self.sui = set_Ui_Form()
-        self.sui.setupUi(self.setwindow)
-        self.setwindow.show()
-        #print('hi set')   
-
-    def fj_clicked(self):
-        #Link of SAS browser in our racks 
-        webbrowser.open('http://192.168.4.11')
-
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(822, 594)
@@ -123,6 +102,7 @@ class Ui_MainWindow_a(object):
         self.label_23 = QtWidgets.QLabel(self.layoutWidget)
         self.label_23.setObjectName("label_23")
         self.formLayout_9.setWidget(14, QtWidgets.QFormLayout.LabelRole, self.label_23)
+
         self.layoutWidget1 = QtWidgets.QWidget(self.tab_8)
         self.layoutWidget1.setGeometry(QtCore.QRect(390, 10, 261, 441))
         self.layoutWidget1.setObjectName("layoutWidget1")
@@ -191,63 +171,56 @@ class Ui_MainWindow_a(object):
         self.textEdit_2.setMaximumSize(QtCore.QSize(400, 21))
         self.textEdit_2.setLineWrapMode(QtWidgets.QTextEdit.WidgetWidth)
         self.textEdit_2.setObjectName("textEdit_2")
-        
-
         self.formLayout_10.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.textEdit_2)
         self.tabWidget.addTab(self.tab_8, "")
+
+        #Start the copy 
         self.tab_7 = QtWidgets.QWidget()
         self.tab_7.setObjectName("tab_7")
-
-        self.layoutWidget2 = QtWidgets.QWidget(self.tab_7)
-        self.layoutWidget2.setGeometry(QtCore.QRect(0, 0, 290, 491))
-        self.layoutWidget2.setObjectName("layoutWidget2")
-        self.formLayout_4 = QtWidgets.QFormLayout(self.layoutWidget2)
-        self.formLayout_4.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_4.setContentsMargins(10, 20, 10, 10)
-        self.formLayout_4.setSpacing(20)
-        self.formLayout_4.setObjectName("formLayout_4")
-
-        #group pushbutton
-        self.group_pushButton = QtWidgets.QPushButton(self.tab_7)
-        self.group_pushButton.setGeometry(QtCore.QRect(10, 306, 93, 30))
-        self.group_pushButton.setObjectName("group_pushButton")
-        self.group_pushButton.clicked.connect(self.group_clicked)
-        #set pushbutton
-        self.set_pushButton = QtWidgets.QPushButton(self.tab_7)
-        self.set_pushButton.setGeometry(QtCore.QRect(150, 306, 93, 30))
-        self.set_pushButton.setObjectName("set_pushButton")
-        self.set_pushButton.clicked.connect(self.set_clicked)
-        #Fuijitsu pushbutton 
-        self.fj_pushButton = QtWidgets.QPushButton(self.tab_7)
-        self.fj_pushButton.setGeometry(QtCore.QRect(290, 306, 93, 30))
-        self.fj_pushButton.setObjectName("fj_pushButton")
-        self.fj_pushButton.clicked.connect(self.fj_clicked)
-
-
-
-        self.label_8 = QtWidgets.QLabel(self.layoutWidget2)
-        self.label_8.setObjectName("label_8")
-        self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_8)
-        self.label_2 = QtWidgets.QLabel(self.layoutWidget2)
-        self.label_2.setObjectName("label_2")
-        self.formLayout_4.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_2)
-        self.label_7 = QtWidgets.QLabel(self.layoutWidget2)
+        self.label_7 = QtWidgets.QLabel(self.tab_7)
+        self.label_7.setGeometry(QtCore.QRect(10, 250, 128, 21))
         self.label_7.setObjectName("label_7")
-        self.formLayout_4.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_7)
-        self.label_6 = QtWidgets.QLabel(self.layoutWidget2)
-        self.label_6.setObjectName("label_6")
-        self.formLayout_4.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_6)
-        self.label_47 = QtWidgets.QLabel(self.layoutWidget2)
-        self.label_47.setObjectName("label_47")
-        self.formLayout_4.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_47)
-        self.label_5 = QtWidgets.QLabel(self.layoutWidget2)
-        self.label_5.setObjectName("label_5")
-        self.formLayout_4.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_5)
-
-        self.label_170 = QtWidgets.QLabel(self.layoutWidget2)
-        self.label_170.setObjectName("label_170")
-        self.formLayout_4.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.label_170)
-
+        self.label_2 = QtWidgets.QLabel(self.tab_7)
+        self.label_2.setGeometry(QtCore.QRect(10, 130, 200, 21))
+        self.label_2.setObjectName("label_2")
+        self.label_8 = QtWidgets.QLabel(self.tab_7)
+        self.label_8.setGeometry(QtCore.QRect(10, 10, 185, 21))
+        self.label_8.setObjectName("label_8")
+        
+        self.textEdit_16 = QtWidgets.QTextEdit(self.tab_7)
+        self.textEdit_16.setGeometry(QtCore.QRect(140, 10, 256, 21))
+        self.textEdit_16.setMaximumSize(QtCore.QSize(400, 21))
+        self.textEdit_16.setObjectName("textEdit_16")
+        self.textEdit_17 = QtWidgets.QTextEdit(self.tab_7)
+        self.textEdit_17.setGeometry(QtCore.QRect(140, 130, 256, 21))
+        self.textEdit_17.setMaximumSize(QtCore.QSize(400, 21))
+        self.textEdit_17.setObjectName("textEdit_17")
+        self.textEdit_18 = QtWidgets.QTextEdit(self.tab_7)
+        self.textEdit_18.setGeometry(QtCore.QRect(140, 250, 256, 21))
+        self.textEdit_18.setMaximumSize(QtCore.QSize(400, 21))
+        self.textEdit_18.setObjectName("textEdit_18")
+        
+        self.radioButton = QtWidgets.QRadioButton(self.tab_7)
+        self.radioButton.setGeometry(QtCore.QRect(140, 60, 95, 20))
+        self.radioButton.setObjectName("radioButton")
+        self.radioButton_2 = QtWidgets.QRadioButton(self.tab_7)
+        self.radioButton_2.setGeometry(QtCore.QRect(260, 60, 111, 20))
+        self.radioButton_2.setObjectName("radioButton_2")
+        self.radioButton_3 = QtWidgets.QRadioButton(self.tab_7)
+        self.radioButton_3.setGeometry(QtCore.QRect(260, 190, 111, 20))
+        self.radioButton_3.setObjectName("radioButton_3")
+        self.radioButton_4 = QtWidgets.QRadioButton(self.tab_7)
+        self.radioButton_4.setGeometry(QtCore.QRect(140, 190, 95, 20))
+        self.radioButton_4.setObjectName("radioButton_4")
+        self.radioButton_5 = QtWidgets.QRadioButton(self.tab_7)
+        self.radioButton_5.setGeometry(QtCore.QRect(260, 300, 111, 20))
+        self.radioButton_5.setObjectName("radioButton_5")
+        self.radioButton_6 = QtWidgets.QRadioButton(self.tab_7)
+        self.radioButton_6.setGeometry(QtCore.QRect(140, 300, 95, 20))
+        self.radioButton_6.setObjectName("radioButton_6")
+        self.tabWidget.addTab(self.tab_7, "")
+        #Stop the copy 
+        '''
         self.layoutWidget3 = QtWidgets.QWidget(self.tab_7)
         self.layoutWidget3.setGeometry(QtCore.QRect(360, 28, 265, 250))
         self.layoutWidget3.setObjectName("layoutWidget3")
@@ -287,9 +260,8 @@ class Ui_MainWindow_a(object):
         self.textEdit_70.setObjectName("textEdit_70")
         self.formLayout_11.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.textEdit_70)
 
-
-
         self.tabWidget.addTab(self.tab_7, "")
+        '''
         self.tab_9 = QtWidgets.QWidget()
         self.tab_9.setObjectName("tab_9")
         self.layoutWidget4 = QtWidgets.QWidget(self.tab_9)
@@ -299,6 +271,8 @@ class Ui_MainWindow_a(object):
         self.formLayout_5.setContentsMargins(0, 10, 10, 10)
         self.formLayout_5.setSpacing(20)
         self.formLayout_5.setObjectName("formLayout_5")
+        
+        #OS
         self.label_71 = QtWidgets.QLabel(self.layoutWidget4)
         self.label_71.setObjectName("label_71")
         self.formLayout_5.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_71)
@@ -326,6 +300,7 @@ class Ui_MainWindow_a(object):
         self.label_89 = QtWidgets.QLabel(self.layoutWidget4)
         self.label_89.setObjectName("label_89")
         self.formLayout_5.setWidget(8, QtWidgets.QFormLayout.LabelRole, self.label_89)
+        
         self.layoutWidget5 = QtWidgets.QWidget(self.tab_9)
         self.layoutWidget5.setGeometry(QtCore.QRect(220, 10, 258, 371))
         self.layoutWidget5.setObjectName("layoutWidget5")
@@ -412,6 +387,7 @@ class Ui_MainWindow_a(object):
         self.label_26 = QtWidgets.QLabel(self.layoutWidget6)
         self.label_26.setObjectName("label_26")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_26)
+
         self.label_28 = QtWidgets.QLabel(self.layoutWidget6)
         self.label_28.setObjectName("label_28")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_28)
@@ -444,6 +420,7 @@ class Ui_MainWindow_a(object):
         self.formLayout_18.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.textEdit_58)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
+
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -496,8 +473,6 @@ class Ui_MainWindow_a(object):
         MainWindow.setStatusBar(self.statusbar)
 
 
-        
-
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -527,15 +502,18 @@ class Ui_MainWindow_a(object):
         self.label_22.setText(_translate("MainWindow", "connectionServerPortNumber"))
         self.label_23.setText(_translate("MainWindow", "storagePoolConfigurationPreferences"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_8), _translate("MainWindow", "Physical Network"))
-        self.label_8.setText(_translate("MainWindow", "numberOfHarddiskArrays"))
-        self.label_2.setText(_translate("MainWindow", "numberOfHarddisksInArray"))
-        self.label_7.setText(_translate("MainWindow", "numberOfServers"))
-        self.label_6.setText(_translate("MainWindow", "serverNames"))
-        self.label_47.setText(_translate("MainWindow", "basicKickstartConfigurations"))
-        self.label_5.setText(_translate("MainWindow", "hardiskToServerAssociationMatrix"))
-        self.label_170.setText(_translate("MainWindow", "activeZoneSet"))
-
+        
+        self.label_7.setText(_translate("MainWindow", "SAS IP3"))
+        self.label_2.setText(_translate("MainWindow", "SAS IP2"))
+        self.label_8.setText(_translate("MainWindow", "SAS IP1"))
+        self.radioButton.setText(_translate("MainWindow", "Templete"))
+        self.radioButton_2.setText(_translate("MainWindow", "Redirection"))
+        self.radioButton_3.setText(_translate("MainWindow", "Redirection"))
+        self.radioButton_4.setText(_translate("MainWindow", "Templete"))
+        self.radioButton_5.setText(_translate("MainWindow", "Redirection"))
+        self.radioButton_6.setText(_translate("MainWindow", "Templete"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _translate("MainWindow", "Storage"))
+        
         self.label_71.setText(_translate("MainWindow", "fileSystemType"))
         self.label_72.setText(_translate("MainWindow", "isRAID"))
         self.label_73.setText(_translate("MainWindow", "RAIDLevel"))
@@ -547,10 +525,6 @@ class Ui_MainWindow_a(object):
         self.label_89.setText(_translate("MainWindow", "uninstalledPackages"))
 
 
-        self.group_pushButton.setText(_translate("Form", "Add Group"))
-        self.set_pushButton.setText(_translate("Form", "Add Set"))
-
-        self.fj_pushButton.setText(_translate("Form", "Go Fuijtsu"))
 
 
         
@@ -592,15 +566,7 @@ class Ui_MainWindow_a(object):
         storagePoolConfigurationPreferences = self.textEdit_15.toPlainText()
         
         #SAS
-        numberOfHarddiskArrays_SAS = self.textEdit_16.toPlainText()
-        numberOfHarddisksInArray_SAS = self.textEdit_21.toPlainText()
-        numberOfServers_SAS = self.textEdit_20.toPlainText()
-        serverNames_SAS = self.textEdit_17.toPlainText()
-        basicKickstartConfigurations = self.textEdit_19.toPlainText()
-        hardiskToServerAssociationMatrix = self.textEdit_18.toPlainText()
-        activeZoneSet = self.textEdit_70.toPlainText()
-        self.zone_list.append(activeZoneSet)
-
+        
         #OS
         fileSystemType = self.textEdit_46.toPlainText()
         isRAID = self.textEdit_45.toPlainText()
@@ -642,14 +608,6 @@ class Ui_MainWindow_a(object):
                         'connectionServerIPAddress': connectionServerIPAddress,
                         'connectionServerPortNumber': connectionServerPortNumber,
                         'storagePoolConfigurationPreferences': storagePoolConfigurationPreferences,
-
-                        'numberOfHarddiskArrays_SAS': numberOfHarddiskArrays_SAS,  
-                        'numberOfHarddisksInArray_SAS': numberOfHarddisksInArray_SAS, 
-                        'numberOfServers_SAS': numberOfServers_SAS,
-                        'serverNames_SAS': serverNames_SAS,
-                        'basicKickstartConfigurations': basicKickstartConfigurations,
-                        'hardiskToServerAssociationMatrix': hardiskToServerAssociationMatrix,
-                        'activeZoneSet': self.zone_list[-1], 
 
                         'fileSystemType': fileSystemType, 
                         'isRAID': isRAID,
