@@ -1,0 +1,40 @@
+GUI:
+1)	Default:
+Redirects to entire system templates (some are ready to use comes with the system and there will be history of the user’s work stored as templates too) based on the following hardware specs:
+a.	Number of servers 
+b.	Architecture required (x86, arm, etc.)
+c.	IPs of servers on Management network 
+
+ 
+2)	Customized 
+Pane #1 Hardware Specs: 
+a.	Number of servers [field]
+b.	IPs of servers on Management network  add new server [button]   redirect to a [window] where the user inputs server name [field], server ip [field] and Architecture required [dropdown menu] (x86, arm, etc.) display all the server names, ips, and architectures added on the original window
+Pane #2 SAS Config: 
+a.	SAS IP field (either redirection to gui or choose template from a dropdown menu of the template names then the action at the backend is to read the json file associated with this template and stored in the system)
+b.	Dropdown menu of the template names
+c.	Name field to name the template you will save after completing your work in redirection mode
+
+Pane #3 Kickstart: 
+System at the backend will take the servers and their associated hard disks as input from previous step
+a.	Display all server names each as a checkbox (at this step, after the user chooses the first server the only active checkboxes become the server names that have the same number of disks as the first choice)
+
+b.	After choosing all servers to partition, user clicks button [start partitioning]   
+
+a.	redirects to a window like:
+b.	text box [partition label]
+c.	drop down menu [mount point]
+d.	text box [size]  keyword to mean use all remaining storage size: “-1” for example –shofo n3ml eh lw kza server moshtkren fen fs el disk w lw e5tr el option bta3 -1 dah wna fel server eltany
+e.	drop down menu [filesystem]
+f.	drop down menu [disk]  the menu will contain the disks associated with each server (input at backend)
+g.	button to finish this step [add partition]  display done partitions 
+
+button [add raid]  redirects to a window with:
+a.	list of check boxes having all raid partitions then the user picks a minimum of 2 raid partitions to make raid device 
+b.	dropdown menu to choose filesystem
+c.	drop down menu [mount point]
+d.	drop down menu [raid level]
+e.	drop down menu [raid device name by convention md0, md1, md2, etc.]
+f.	number of spares [integer text box]
+g.	click button [create raid device]
+
