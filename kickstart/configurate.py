@@ -19,6 +19,8 @@ class Configurate:
             data = json.load(f)
         self.passwd = data["kickstart"]["rootpw"]
         self.disk = data["kickstart"]["diskparts"]
+        self.raid_parts = data["kickstart"]["RAID"]
+        self.raid_partition= data["kickstart"]["RAIDP"]
         self.iprange = data["dhcp"]["range"]
         self.interface = data["dhcp"]["interfacename"]
         self.myip = ni.ifaddresses(self.interface)[ni.AF_INET][0]['addr']
@@ -34,12 +36,21 @@ class Configurate:
         self.add_pass = "rootpw --iscrypted " + h
         self.add_url = f"url --url=\"ftp://{self.myip}/pub\""
         self.add_parts=[]
+        self.add_raid_parts=[]
+        self.add_raid_partis=[]
         self.add_iprange = f"dhcp-range=eno1,{self.iprange[0]},{self.iprange[1]},{self.iprange[2]},8h "
         self.add_dhcpboot = f"dhcp-boot=centos/BOOTx64.EFI,pxeserver,{self.myip}"
         self.add_dhcpo6 = f"dhcp-option=6,{self.myip},8.8.8.8"
         self.add_dhcpo66 = f"dhcp-option=66,{self.myip}"
         for name,info in self.disk.items():
             self.add_parts.append(f"part {name} --fstype=\"{info[0]}\" --size={info[1]} --ondisk={info[2]}")
+        for name,info in self.raid_parts():
+            temp = f"raid{info[0]} {name} --level={info[1]} --ondisk="
+            for iat in info:
+                temp += f" {iat}" 
+            self.add_raid_parts.append(temp)
+        for name,info in self.raid_partition.items():
+            self.add_raid_partis.append(f"part {name} {info[1]} --ondisk={info[0]} --size={info[2]}")
         # add raid, timezone, langauga zy ma fe el data.json
     
     def feedks(self):
@@ -50,6 +61,10 @@ class Configurate:
         self.line_prepender(self.ksfile,"# Use network installation")
         self.line_prepender(self.ksfile,self.add_pass)
         self.line_prepender(self.ksfile,"# Root password")
+        for i in self.add_raid_parts:
+            self.line_prepender(self.ksfile,i)
+        for i in self.add_raid_partis:
+            self.line_prepender(self.ksfile,i)
         #add here
     
     def feeddns(self):
