@@ -6,7 +6,7 @@
         "timezone":"America/New_York",
         "bootloaderMBR":true,
         "RAID": {"/":["xfs",4096],"/boot":["xfs",500],"/home":["xfs",1032],"/var":["xfs",1032],"swap":["swap",1032]},
-        "RAIDP": {"/dev/sda":["sda","--asprimary",1000],"/dev/sdb":["sdb",2000]}
+        "RAIDP": {"/dev/sda":["sda","--asprimary",1000],"/dev/sdb":["sdb","--asgrow",2000]}
     
     },
     "dhcp":{
