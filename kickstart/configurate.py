@@ -45,8 +45,8 @@ class Configurate:
         for name,info in self.disk.items():
             self.add_parts.append(f"part {name} --fstype=\"{info[0]}\" --size={info[1]} --ondisk={info[2]}")
         for name,info in self.raid_parts.items():
-            temp = f"raid{info[0]} {name} --level={info[0]} --ondisk="
-            for iat in info:
+            temp = f"raid{info[0]} {name} --level={info[0]} --raid-devices={info[1]}"
+            for iat in info[2:]:
                 temp += f" {iat}" 
             self.add_raid_parts.append(temp)
         for name,info in self.raid_partition.items():
