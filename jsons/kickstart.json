@@ -5,7 +5,7 @@
         "langauage":"en_US",
         "timezone":"America/New_York",
         "bootloaderMBR":true,
-        "RAID": {"/":[0,3,"dev/sda"],"/boot":[0,3,"dev/sda"],"/home":[0,3,"dev/sda"],"/var":["xfs",1032],"swap":["swap",1032]},
+        "RAID": {"/":[0,3,"dev/sda","/dev/sdb1"],"/boot":[0,3,"dev/sda","/dev/sdb1"],"/home":[0,3,"dev/sda"],"/var":["xfs",1032],"swap":["swap",1032]},
         "RAIDP": {"/dev/sda":["sda","--asprimary",1000],"/dev/sdb":["sdb","--asgrow",2000]}
     
     },
