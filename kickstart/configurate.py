@@ -39,7 +39,7 @@ class Configurate:
         self.add_dhcpo6 = f"dhcp-option=6,{self.myip},8.8.8.8"
         self.add_dhcpo66 = f"dhcp-option=66,{self.myip}"
         for name,info in self.disk.items():
-            self.add_parts.append(f"part {name} --fstype=\"{info[0]}\" --size={info[1]}")
+            self.add_parts.append(f"part {name} --fstype=\"{info[0]}\" --size={info[1]} --ondisk={info[2]}")
         # add raid, timezone, langauga zy ma fe el data.json
     
     def feedks(self):
