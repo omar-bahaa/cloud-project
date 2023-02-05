@@ -1,7 +1,7 @@
 {
     "kickstart":{
         "rootpw":"qwe",
-        "diskparts":{"/":["xfs",4096],"/boot":["xfs",500],"/home":["xfs",1032],"/var":["xfs",1032],"swap":["swap",1032]},
+        "diskparts":{"/":["xfs",4096,"dev/sda"],"/boot":["xfs",500,"dev/sdb"],"/home":["xfs",1032,"dev/sdc"],"/var":["xfs",1032,"dev/sdc"],"swap":["swap",1032,"dev/sda"]},
         "langauage":"en_US",
         "timezone":"America/New_York",
         "bootloaderMBR":true,
