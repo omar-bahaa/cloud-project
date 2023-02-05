@@ -44,7 +44,7 @@ class Configurate:
         self.add_dhcpo66 = f"dhcp-option=66,{self.myip}"
         for name,info in self.disk.items():
             self.add_parts.append(f"part {name} --fstype=\"{info[0]}\" --size={info[1]} --ondisk={info[2]}")
-        for name,info in self.raid_parts():
+        for name,info in self.raid_parts.items():
             temp = f"raid{info[0]} {name} --level={info[1]} --ondisk="
             for iat in info:
                 temp += f" {iat}" 
