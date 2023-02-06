@@ -282,10 +282,28 @@ class SASManager(Viewer):
         self.executeZoneGroupsConfig()
         self.executeZoneSetsConfig()
         
-    def getServerToHardDisks(self, zoneset: ZoneSet):
-        for mapping in zoneset.zonegroupPairsSetofSets:
-            if len(mapping) == 1:
-                for expander, phys in mapping.parentExpanderToPhysPorts.items():
-                    
+    def getServerToHardDisks(self):
+        pass
+    def getDeviceName(self,given_expndr_phy,table_str):
+        data=table_str.split("Attached SATA Port Selector")[1]
+        lines = data.split("\n")
+        device_names = {}
+        for line in lines[7:]:
+            fields = line.split()
+
+            if len(fields) > 0:
+                expndr=fields[0]
+                phy = fields[1]
+                expndr_phy=expndr+"_"+phy
+                device = fields[6]
+                if device != "----------------":
+                    device_names[expndr_phy] = device
+                else:
+                    device_names[expndr_phy] = "None"
+        print(device_names)
+        if given_expndr_phy in device_names.keys():
+            return device_names[given_expndr_phy]
+        else:
+            return "error: expander and physical port does not exist, please specify them in the form: ExpandeName_PhysNumber"
 
     
