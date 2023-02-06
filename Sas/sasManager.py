@@ -13,6 +13,7 @@ class SASManager(Viewer):
         self.allZonesets = {}
         self.activeZoneset = None
         self.__ZoneConfigPassword = ZoneConfigPassword
+        self.serversToHardDisks = {}
         super().__init__(ip=ip, rackNumber=rackNumber)
         self.clearBeforeConfigData="0"
 
@@ -274,12 +275,12 @@ class SASManager(Viewer):
             self.allZonesets[zonesetname] = zoneset
         return  
      
-   #//////////////////////////////////////////////////////
     def readJson(self, dataFilePath):
-        with open(dataFilePath) as dataFile:
-            data = json.load(dataFile)
-        return data
- 
-   #//////////////////////////////////////////////////////
+        self.passToExecutors(dataFilePath)
+        self.executeZoneGroupsConfig()
+        self.executeZoneSetsConfig()
+        
+    def getServerToHardDisks(self):
+        pass
 
     
