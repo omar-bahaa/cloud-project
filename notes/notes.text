@@ -534,3 +534,11 @@ MMB Firmware Version 6.00
 3. bootloader
 4. 3lat tol bn3ml new partitions
 5. raid
+
+
+TODO:
+1. test sas
+2. integerate gui with sas (including jsons)
+3. iscsi (using Kickstart?) (including jsons)
+    1. on vms
+    2. on real servers
