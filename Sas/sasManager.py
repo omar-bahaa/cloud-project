@@ -14,6 +14,8 @@ class SASManager(Viewer):
         self.activeZoneset = None
         self.__ZoneConfigPassword = ZoneConfigPassword
         self.serversToHardDisks = {}
+        self.servers = []
+        self.harddisks = []
         super().__init__(ip=ip, rackNumber=rackNumber)
         self.clearBeforeConfigData="0"
 
@@ -220,9 +222,9 @@ class SASManager(Viewer):
  
     def get_zonegroups(self):
         output_names = self.showZonegroup()
-        with open("zonegrs.text", "w") as f:
+        with open("tmp/zonegrs.text", "w") as f:
             f.write(output_names)
-        with open("zonegrs.text", "r") as f:
+        with open("tmp/zonegrs.text", "r") as f:
             ZGs = re.findall(r"^.*?-{8,}\n(.*?)$", f.read()[:-len("\nSDMCLI>")], flags=re.S)
             ZGs_list = ZGs[0].strip().split("\n") # list of all zonegroup names
     
@@ -230,9 +232,9 @@ class SASManager(Viewer):
             output_zgs = self.showZonegroupData(zonegr)
             zonegroup = ZoneGroup(zonegr)
     
-            with open("zonegr.text", "w") as f:
+            with open("tmp/zonegr.text", "w") as f:
                 f.write(output_zgs)
-            with open("zonegr.text", "r") as f:
+            with open("tmp/zonegr.text", "r") as f:
                 exphy = re.findall(r"^.*?-{8,}\n"+zonegr+r":\n(.*?)$", f.read()[:-len("\nSDMCLI>")].strip(), flags=re.S)
                 if exphy:
                     exphy = exphy[0].strip().split("\n")
@@ -247,9 +249,9 @@ class SASManager(Viewer):
      
     def get_zonesets(self):
         zsnames = self.showZoneset()
-        with open("zones.text", "w") as f:
+        with open("tmp/zones.text", "w") as f:
             f.write(zsnames)
-        with open("zones.text", "r") as f:
+        with open("tmp/zones.text", "r") as f:
             ZSs = re.findall(r"^.*?-{8,}\n(.*?)$", f.read()[:-len("\nSDMCLI>")], flags=re.S)
             ZSs_list = ZSs[0].strip().split("\n")
         for zonesetname in ZSs_list:
@@ -259,9 +261,9 @@ class SASManager(Viewer):
                 zoneset.name = zonesetname
                 self.activateZoneSet(zoneset)
             zonesetdata = self.showZonesetData(zonesetname)
-            with open("zoneset.text", "w") as f:
+            with open("tmp/zoneset.text", "w") as f:
                 f.write(zonesetdata)
-            with open("zoneset.text", "r") as f:
+            with open("tmp/zoneset.text", "r") as f:
                 mappings = re.findall(r"^.*?-{8,}\n"+zonesetname+r".*:\n(.*?)$", f.read()[:-len("\nSDMCLI>")], flags=re.S)
                 if mappings:
                     mappings = mappings[0].strip().split('\n')
@@ -280,7 +282,10 @@ class SASManager(Viewer):
         self.executeZoneGroupsConfig()
         self.executeZoneSetsConfig()
         
-    def getServerToHardDisks(self):
-        pass
+    def getServerToHardDisks(self, zoneset: ZoneSet):
+        for mapping in zoneset.zonegroupPairsSetofSets:
+            if len(mapping) == 1:
+                for expander, phys in mapping.parentExpanderToPhysPorts.items():
+                    
 
     
