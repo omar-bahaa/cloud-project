@@ -2,21 +2,26 @@ import paramiko
 import json
 
 class ServerManager():
-    def __init__(self) -> None:
+    def __init__(self, ip="") -> None:
         pass
     
     def load_config(self, json_filepath: str) -> None:
         with open(json_filepath, "rb") as f:
             conf = json.load(f)
         self.SERVER_MANAGER_IP=conf["server_manager_ip"]
-        self.SERVER_MANAGER_USERNAME=conf["server_manager_username"]
-        self.SERVER_MANAGER_PASSWORD=conf["server_manager_password"]
+        self.__username=conf["server_manager_username"]
+        self.__password=conf["server_manager_password"]
 
     def connect(self):
         self.SSHClient = paramiko.SSHClient()
         self.SSHClient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.SSHClient.connect(self.SERVER_MANAGER_IP, username=self.SERVER_MANAGER_USERNAME, password=self.SERVER_MANAGER_PASSWORD)
+        self.SSHClient.connect(self.SERVER_MANAGER_IP, username=self.__username, password=self.__password)
         
+    def connect_withchannel(self, channel):
+        self.SSHClient = paramiko.SSHClient()
+        self.SSHClient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.SSHClient.connect(self.ip, username=self.__username, password=self.__password, sock=channel)
+    
     def get_SSHClient(self):
         return self.SSHClient
     
@@ -24,40 +29,32 @@ class ServerManager():
         self.SSHClient.close()
         
     def invoke_shell(self):
-        self.shell = self.SSHClient.invoke_shell()    
+        self.shell = self.SSHClient.invoke_shell()
     
     def initialize_shell(self):
         buff = ''
         while not buff.endswith('Enter selection: '):
             buff += self.shell.recv(1).decode()
-
-        self.shell.send("8\n")
-        buff = ''
-        while not buff.endswith('Enter selection or type (0) to quit: '):
-            buff += self.shell.recv(1).decode()
-
-        self.shell.send("1\n")
-        buff = ''
-        while not buff.endswith('BX900S2 -> '):
-            buff += self.shell.recv(1).decode()
+        self.send_command("8\n", 'Enter selection or type (0) to quit: ')
+        self.send_command("1\n")
     
-    def turnon_device(self, device:str):
-        self.shell.send(f"start {device}\n")
+    def initalize_connection(self, channel):
+        self.connect_withchannel(channel)
+        self.invoke_shell()
+        self.initialize_shell()
+    
+    def send_command(self, command:str, eof:str='BX900S2 -> '):
+        self.shell.send(command)
         buff = ''
-        while not buff.endswith('BX900S2 -> '):
+        while not buff.endswith(eof):
             buff += self.shell.recv(1).decode()
         return buff
+    
+    def turnon_device(self, device:str):
+        return self.send_command(f"start {device}\n")
         
     def turnoff_device(self, device:str):
-        self.shell.send(f"stop {device}\n")
-        buff = ''
-        while not buff.endswith('BX900S2 -> '):
-            buff += self.shell.recv(1).decode()
-        return buff
+        return self.send_command(f"stop {device}\n")
     
     def get_device_info(self, device:str):
-        self.shell.send(f"show {device}\n")
-        buff = ''
-        while not buff.endswith('BX900S2 -> '):
-            buff += self.shell.recv(1).decode()
-        return buff
+        return self.send_command(f"show {device}\n")

@@ -5,6 +5,7 @@ class Server:
         self.management_ip = ip
         self.arch = arch
         self.associated_harddisks = []
+        self.rackNo = None
         self.os = None
         self.packages = []
         self.isFrontend = False

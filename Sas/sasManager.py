@@ -2,6 +2,7 @@ import json
 import re
 from Sas.sasViewer import Viewer
 from Sas.sasConfigurator import ZoneSet, ZoneGroup
+from Device.device import Server, HardDisk
 
 
 
@@ -18,6 +19,30 @@ class SASManager(Viewer):
         self.harddisks = {}
         super().__init__(ip=ip, rackNumber=rackNumber)
         self.clearBeforeConfigData="0"
+
+    def importServer(self, server: Server):
+        if server.name in self.servers.keys():
+            raise Exception("Server already exists")
+        self.servers[server.name] = server
+        return 0
+    
+    def importHardDisk(self, harddisk: HardDisk):
+        if harddisk.name in self.harddisks.keys():
+            raise Exception("HardDisk already exists")
+        self.harddisks[harddisk.name] = harddisk
+        return 0
+    
+    def createServer(self, name, ip, arch):
+        if name in self.servers.keys():
+            raise Exception("Server already exists")
+        self.servers[name] = Server(name, ip, arch)
+        return 0
+
+    def createHardDisk(self, name):
+        if name in self.harddisks.keys():
+            raise Exception("HardDisk already exists")
+        self.harddisks[name] = HardDisk(name)
+        return 0    
 
     def addPhysToZoneGroup(self,zonegroup,exphys):
         if not zonegroup.name in self.allZonegroups.keys():
@@ -282,9 +307,10 @@ class SASManager(Viewer):
         self.executeZoneGroupsConfig()
         self.executeZoneSetsConfig()
         
-    def getServerToHardDisks(self):
+    def getServerToHardDisks(self, zoneset: ZoneSet=None):
         serversToHardDisks={}
-        for mapping in self.activeZoneset.zonegroupPairsSetofSets:
+        zoneset = zoneset if zoneset else self.activeZoneset
+        for mapping in zoneset.zonegroupPairsSetofSets:
             if len(mapping)==1:
                 zonegroup = mapping[0]
                 servers, harddisks = self.getServersAndHarddisksFromZonegroups(zonegroup)
@@ -295,12 +321,25 @@ class SASManager(Viewer):
                         else:
                             serversToHardDisks[server] = [harddisk]
             elif len(mapping)==2:
-                for zonegroup in mapping:
+                zonegroup1, zonegroup2 = mapping
+                servers1, harddisks1 = self.getServersAndHarddisksFromZonegroups(self.allZonegroups[zonegroup1])
+                servers2, harddisks2 = self.getServersAndHarddisksFromZonegroups(self.allZonegroups[zonegroup2])
+                for server in servers1:
+                    for harddisk in harddisks2:
+                        if server in serversToHardDisks.keys():
+                            serversToHardDisks[server].append(harddisk)
+                        else:
+                            serversToHardDisks[server] = [harddisk] 
+                for server in servers2:
+                    for harddisk in harddisks1:
+                        if server in serversToHardDisks.keys():
+                            serversToHardDisks[server].append(harddisk)
+                        else:
+                            serversToHardDisks[server] = [harddisk]
+        self.serversToHardDisks = serversToHardDisks
+        return serversToHardDisks
 
                 
-
-                    return
-
     def getServersAndHarddisksFromZonegroups(self, zonegroup: ZoneGroup):
         servers = []
         hard_disks = []

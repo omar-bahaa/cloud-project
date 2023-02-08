@@ -6,7 +6,7 @@
 --------------------------------------------------------------------
 # New:
 
-1) get device name (server or hard disk) using "sdmcli> show phy myalias:8". Done using "show phy" command
+1) get device name (server or hard disk) using "sdmcli> show phy myalias:8". Done using "show phy" command "servers must be open"
 2) apply above to SasManaager.getServersToHardDisks()
 3) need to know when the Kickstart file is received to selected servers and when it is finished to start a new batch
 4) session folder feh el Kickstart files we will use on servers (with mappings for each kickstart file to targeted servers)
