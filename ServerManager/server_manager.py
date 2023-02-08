@@ -3,7 +3,9 @@ import json
 
 class ServerManager():
     def __init__(self, ip="") -> None:
-        pass
+        self.ip = ip
+        self.servers = {}
+        self.hardDisks = {}
     
     def load_config(self, json_filepath: str) -> None:
         with open(json_filepath, "rb") as f:

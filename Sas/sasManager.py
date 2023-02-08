@@ -16,7 +16,7 @@ class SASManager(Viewer):
         self.__ZoneConfigPassword = ZoneConfigPassword
         self.serversToHardDisks = {}
         self.servers = {}
-        self.harddisks = {}
+        self.hardDisks = {}
         super().__init__(ip=ip, rackNumber=rackNumber)
         self.clearBeforeConfigData="0"
 
@@ -27,22 +27,22 @@ class SASManager(Viewer):
         return 0
     
     def importHardDisk(self, harddisk: HardDisk):
-        if harddisk.name in self.harddisks.keys():
+        if harddisk.name in self.hardDisks.keys():
             raise Exception("HardDisk already exists")
-        self.harddisks[harddisk.name] = harddisk
+        self.hardDisks[harddisk.name] = harddisk
         return 0
     
     def createServer(self, name, ip, arch):
         if name in self.servers.keys():
             raise Exception("Server already exists")
         self.servers[name] = Server(name, ip, arch)
-        return 0
+        return self.servers[name]
 
     def createHardDisk(self, name):
-        if name in self.harddisks.keys():
+        if name in self.hardDisks.keys():
             raise Exception("HardDisk already exists")
-        self.harddisks[name] = HardDisk(name)
-        return 0    
+        self.hardDisks[name] = HardDisk(name)
+        return self.hardDisks[name]
 
     def addPhysToZoneGroup(self,zonegroup,exphys):
         if not zonegroup.name in self.allZonegroups.keys():
@@ -349,8 +349,8 @@ class SASManager(Viewer):
                 name = self.getDeviceName(exp+"_"+phy)
                 if name in self.servers.keys():
                     servers.append(self.servers[name])
-                elif name in self.harddisks.keys():
-                    hard_disks.append(self.harddisks[name])
+                elif name in self.hardDisks.keys():
+                    hard_disks.append(self.hardDisks[name])
         return servers, hard_disks
 
     def getDeviceName(self,given_expndr_phy):
