@@ -57,20 +57,24 @@ sas5_server.invoke_shell()
 # print(sas5_server.allZonegroups)
 # sas5_server.executeZoneSetsConfig()
 # print(sas5_server.allZonesets)
-sas5_server.get_zonegroups()
-sas5_server.get_zonesets()
+# sas5_server.get_zonegroups()
+# sas5_server.get_zonesets()
 
 
 # print(sas5_server.allZonegroups)
 # print(sas5_server.allZonesets)
 
-for zg in sas5_server.allZonegroups.values():
-    print(zg.name, zg.parentExpanderToPhysPorts)
+# for zg in sas5_server.allZonegroups.values():
+#     print(zg.name, zg.parentExpanderToPhysPorts)
 
-for zs in sas5_server.allZonesets.values():
-    print(zs.name, zs.zonegroupPairsSetofSets)
+# for zs in sas5_server.allZonesets.values():
+#     print(zs.name, zs.zonegroupPairsSetofSets)
 
-print(sas5_server.activeZoneset.name)
+# print(sas5_server.activeZoneset.name)
+
+
+# print(sas5_server.getDeviceName("SAS_ConnectionB*_00"))
+print(sas5_server.getDeviceName("SAS_ConnectionB*_34"))
 
 connnection_server.close_connection()
 sas5_server.close_connection()

@@ -14,8 +14,8 @@ class SASManager(Viewer):
         self.activeZoneset = None
         self.__ZoneConfigPassword = ZoneConfigPassword
         self.serversToHardDisks = {}
-        self.servers = []
-        self.harddisks = []
+        self.servers = {}
+        self.harddisks = {}
         super().__init__(ip=ip, rackNumber=rackNumber)
         self.clearBeforeConfigData="0"
 
@@ -283,26 +283,55 @@ class SASManager(Viewer):
         self.executeZoneSetsConfig()
         
     def getServerToHardDisks(self):
-        pass
-    def getDeviceName(self,given_expndr_phy,table_str):
+        serversToHardDisks={}
+        for mapping in self.activeZoneset.zonegroupPairsSetofSets:
+            if len(mapping)==1:
+                zonegroup = mapping[0]
+                servers, harddisks = self.getServersAndHarddisksFromZonegroups(zonegroup)
+                for server in servers:
+                    for harddisk in harddisks:
+                        if server in serversToHardDisks.keys():
+                            serversToHardDisks[server].append(harddisk)
+                        else:
+                            serversToHardDisks[server] = [harddisk]
+            elif len(mapping)==2:
+                for zonegroup in mapping:
+
+                
+
+                    return
+
+    def getServersAndHarddisksFromZonegroups(self, zonegroup: ZoneGroup):
+        servers = []
+        hard_disks = []
+        for exp, phys in zonegroup.parentExpanderToPhysPorts.items():
+            exp = exp[:17]+"*" if len(exp) > 16 else exp
+            for phy in phys:
+                name = self.getDeviceName(exp+"_"+phy)
+                if name in self.servers.keys():
+                    servers.append(self.servers[name])
+                elif name in self.harddisks.keys():
+                    hard_disks.append(self.harddisks[name])
+        return servers, hard_disks
+
+    def getDeviceName(self,given_expndr_phy):
+        table_str=self.showPhy()
         data=table_str.split("Attached SATA Port Selector")[1]
         lines = data.split("\n")
-        device_names = {}
+        self.device_names = {}
         for line in lines[7:]:
             fields = line.split()
-
-            if len(fields) > 0:
+            if len(fields) > 1:
                 expndr=fields[0]
                 phy = fields[1]
                 expndr_phy=expndr+"_"+phy
                 device = fields[6]
                 if device != "----------------":
-                    device_names[expndr_phy] = device
+                    self.device_names[expndr_phy] = device
                 else:
-                    device_names[expndr_phy] = "None"
-        print(device_names)
-        if given_expndr_phy in device_names.keys():
-            return device_names[given_expndr_phy]
+                    self.device_names[expndr_phy] = "None"
+        if given_expndr_phy in self.device_names.keys():
+            return self.device_names[given_expndr_phy]
         else:
             return "error: expander and physical port does not exist, please specify them in the form: ExpandeName_PhysNumber"
 
