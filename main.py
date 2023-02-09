@@ -4,7 +4,7 @@ from Sas.sasManager import SASManager
 from ConnectionServer.ConnectionServer import ConnectionServer
 from ServerManager.server_manager import ServerManager
 from Device.device import Server, HardDisk
-
+from kickstart.kickstartManager import KickstartManager, Configuration
 # ------------------------------------------------------------------------------------------------------------------------
 # user add connection server and servere manager data. We use them to connect 
 
@@ -57,6 +57,67 @@ else:                                              # if user didn't use redirect
 # Pane #3
 # servers checkboxes are shown using the list of servers
 # 
+kickstartManager=KickstartManager()
+
+
+#in server selection step for display:
+allServers=[]
+firstChosenServer=Server()
+activeChoice=True
+for server in allServers:
+    if firstChosenServer.arch==server.arch:
+        #make server active choice
+        activeChoice=True
+    else:
+        #make server inactive choice
+        activeChoice=False
+moveToPartiotioningStep=False #display as inactive button
+while moveToPartiotioningStep==False:
+    #after selecting servers
+    chosenServers=[]
+    finishOSButton=False
+    osType=""
+    isFrontend=""
+    dhcpRangeStart=""
+    dhcpRangeEnd=""
+    dhcpRangeNetMask=""
+    dhcpInterfaceName=""
+    kickstartManager.makeOSSelection(chosenServers,osType,isFrontend,dhcpRangeStart,dhcpRangeEnd,dhcpRangeNetMask,dhcpInterfaceName)
+    
+
+    #checking if all servers got a OS selection then make button move to partitioning step active
+    for server in allServers:
+        flag1=True
+        if server.osType==None:
+            flag1=False
+        if flag1 ==False:
+            moveToPartiotioningStep=True #for display only: display as active button msh m3naha enha clicked y3ny
+
+#-------------------------------------------------------------------------------
+#Partioning Step
+listOfServer=[]
+for server in listOfServer:
+    if firstChosenServer.arch==server.arch and firstChosenServer.osType==server.osType:
+        #make server active choice
+        activeChoice=True
+    else:
+        #make server inactive choice
+        activeChoice=False
+
+finishParttion=False
+while finishParttion==False:
+    chosenServersPart=[]       
+    partitioning=""
+    kickstartManager.makePartioningSelection(set(chosenServersPart),partitioning)
+
+#checking if all servers got a partitioning selection then make button move to partitioning step active
+    for server in allServers:
+        flag1=True
+        if server.partitioning==None:
+            flag1=False
+        if flag1 ==False:
+            finishParttion=True #for display only: display as active button msh m3naha enha clicked y3ny
+
 
 # ------------------------------------------------------------------------------------------------------------------------
 ## m3 bdayt pane #3 n4of which servers are connected to which hard disks
@@ -73,6 +134,7 @@ sas5_server.getServerToHardDisks()
 kickstart = Configurate(ksfile=KSFILEPATH, dnsmasqfile=DNSMASQFILEPATH, pxefile=PXEFILEPATH)
 kickstart.process(json_filepath=KICKSTARTJSONFILEPATH)
 
+#kickstart manager represents a group of servers that will take the same kickstart config file
 """
 1)	Default:
 Redirects to entire system templates (some are ready to use comes with the system and there will be history of 
