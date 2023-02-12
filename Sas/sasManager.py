@@ -1,11 +1,31 @@
 import json
 import re
+import datetime
 from Sas.sasViewer import Viewer
 from Sas.sasConfigurator import ZoneSet, ZoneGroup
 from Device.device import Server, HardDisk
 
-
-
+class SasConfigCheckpoint:
+    checkpoints = []
+    def __init__(self, name):
+        self.timestamp = datetime.datetime.now()
+        self.name = name
+        self.listOfZonesets = []
+        self.listOfZonegroups = []
+        self.activeZoneset = None
+        self.description = None
+        self.actions = []
+        self.dependencies = []
+        SasConfigCheckpoint.checkpoints.append(self)
+    
+    def rollback(self):
+        actionsForRollback = [] # actions to be excuted in reverse order to return to the state of this checkpoint
+        while self.actions:
+            action = self.actions.pop()
+            actionsForRollback.append(action)
+        return actionsForRollback
+        
+        
 # We shouldn't make the zonegroup and zoneset classes connect to the sas every time we create a new instance of them,
 # only the master shall send the commands to the sas
 class SASManager(Viewer):
@@ -17,6 +37,7 @@ class SASManager(Viewer):
         self.serversToHardDisks = {}
         self.servers = {}
         self.hardDisks = {}
+        self.checkpoints = {}   # name: system state
         super().__init__(ip=ip, rackNumber=rackNumber)
         self.clearBeforeConfigData="0"
 
@@ -374,4 +395,13 @@ class SASManager(Viewer):
         else:
             return "error: expander and physical port does not exist, please specify them in the form: ExpandeName_PhysNumber"
 
+    def createCheckpoint(self) -> SasConfigCheckpoint:
+        pass
+
+    def rollbackToCheckpoint(self, checkpoint: SasConfigCheckpoint):
+        actions = checkpoint.rollback()
+        pass
+    
+    
+    
     

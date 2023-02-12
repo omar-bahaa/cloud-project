@@ -10,6 +10,7 @@ class ZoneGroup():
     
     def __init__(self, zonegroupName):
         self.captureCommandsList = []
+        self.caputreOutputList = []
         self.name = zonegroupName
         self.parentExpanderToPhysPorts = {} # expander is key and each value is a set of phys port numbers to which im connecting my device to that parent expander
         
@@ -41,6 +42,9 @@ class ZoneGroup():
     
     def addCommand(self, command):
         self.captureCommandsList.append(command)
+        
+    def addOutput(self, output):
+        self.caputreOutputList.append(output)
 
 
 class ZoneSet():
@@ -57,6 +61,7 @@ class ZoneSet():
     def __init__(self, zonesetName):
         self.name = zonesetName
         self.captureCommandsList = []
+        self.caputreOutputList = []
         self.zonegroupPairsSetofSets = set()
 
     def renameZoneSet(self,newZonesetName):
@@ -74,6 +79,9 @@ class ZoneSet():
 
     def addCommand(self, command):
         self.captureCommandsList.append(command)
+        
+    def addOutput(self, output):
+        self.caputreOutputList.append(output)
         
     def clearZoneSet(self):
         self.zonegroupPairsSetofSets.clear()

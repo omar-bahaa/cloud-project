@@ -10,6 +10,7 @@ class SASConnector():
         self.SSHClient=None
         self.shell=None
         self.captureCommandsList = []
+        self.caputreOutputList = []
         self.rackNumber=rackNumber
 
     def load_config(self, json_filepath: str) -> None:
@@ -53,9 +54,11 @@ class SASConnector():
     def sendAndCaptureCommand(self, command):
         output = self.send_command(command+"\r")
         self.captureCommandsList.append(command)
+        self.caputreOutputList.append(output)
         return output
     
     def sendAndCaptureCommandWithObject(self, command, object):
         output = self.sendAndCaptureCommand(command)
         object.addCommand(command)
+        object.addOutput(output)
         return output
