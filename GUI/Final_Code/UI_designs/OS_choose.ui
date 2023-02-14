@@ -81,11 +81,6 @@
      <string>Wifi</string>
     </property>
    </item>
-   <item>
-    <property name="text">
-     <string>ISCSI</string>
-    </property>
-   </item>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
