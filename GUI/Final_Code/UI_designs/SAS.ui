@@ -272,7 +272,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Add Another Server</string>
+    <string>Add Another SAS Switch</string>
    </property>
   </widget>
   <widget class="QPushButton" name="Back_button">
