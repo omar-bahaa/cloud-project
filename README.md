@@ -24,17 +24,6 @@ machines configured differently. <br>
 ## The project contains:
 1. GUI
 2. SAS scripting
-3. Opennebula
-4. Network scripting
+3. kickstart
 
-### 1. GUI:
-
-   The GUI done using QT designer for geometry and Python + PYQT for control. 
-
-   Period: 2 months average for initialization + modifications
-
-   #### Content
-   1. The GUI contain 3 version so far.
-   2. Each version contains a Readme file to explain how to run.
-   3. The result of the GUI stored in 3 different json files. 
-
+## Find the Thesis (project discription)
