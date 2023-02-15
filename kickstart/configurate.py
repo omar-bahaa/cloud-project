@@ -3,7 +3,18 @@ import json
 import netifaces as ni
 import re
 import os
+import socket, struct
 
+def get_default_gateway_linux():
+    """Read the default gateway directly from /proc."""
+    with open("/proc/net/route") as fh:
+        for line in fh:
+            fields = line.strip().split()
+            if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                # If not default route or not RTF_GATEWAY, skip it
+                continue
+
+            return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 class Configurate:
     def __init__(self,ksfile,dnsmasqfile,pxefile):
         self.passwd = ""
@@ -35,13 +46,16 @@ class Configurate:
         h=passlib.hash.md5_crypt.hash(self.passwd)
         self.add_pass = "rootpw --iscrypted " + h
         self.add_url = f"url --url=\"ftp://{self.myip}/pub\""
+        self.defaltip = get_default_gateway_linux()
         self.add_parts=[]
         self.add_raid_parts=[]
         self.add_raid_partis=[]
         self.add_iprange = f"dhcp-range=eno1,{self.iprange[0]},{self.iprange[1]},{self.iprange[2]},8h "
+        self.add_dhcp3 = f"dhcp-option=3,{self.defaltip}"
+        self.add_dhcpo28 = f"dhcp-option=28,{self.defaltip[:-1]}255"
         self.add_dhcpboot = f"dhcp-boot=centos/BOOTx64.EFI,pxeserver,{self.myip}"
-        self.add_dhcpo6 = f"dhcp-option=6,{self.myip},8.8.8.8"
-        self.add_dhcpo66 = f"dhcp-option=66,{self.myip}"
+        self.add_dhcpo6 = f"dhcp-option=6,{self.defaltip},8.8.8.8"
+        self.add_dhcpo66 = f"dhcp-option=66,{self.defaltip}"
         for name,info in self.disk.items():
             self.add_parts.append(f"part {name} --fstype=\"{info[0]}\" --size={info[1]} --ondisk={info[2]}")
         for name,info in self.raid_parts.items():
@@ -54,17 +68,24 @@ class Configurate:
         # add raid, timezone, langauga zy ma fe el data.json
     
     def feedks(self):
-        for i in self.add_parts:
-            self.line_prepender(self.ksfile,i)
-        self.line_prepender(self.ksfile,"# Disk partitioning information")
-        self.line_prepender(self.ksfile,self.add_url)
-        self.line_prepender(self.ksfile,"# Use network installation")
-        self.line_prepender(self.ksfile,self.add_pass)
-        self.line_prepender(self.ksfile,"# Root password")
-        for i in self.add_raid_parts:
-            self.line_prepender(self.ksfile,i)
-        for i in self.add_raid_partis:
-            self.line_prepender(self.ksfile,i)
+        try:
+            for i in range(1,5):
+                if i !=1 :
+                    temp = self.ksfile[:-4] + str(i)+ self.ksfile[-4:]
+                    self.ksfile = temp
+                for i in self.add_parts:
+                    self.line_prepender(self.ksfile,i)
+                self.line_prepender(self.ksfile,"# Disk partitioning information")
+                self.line_prepender(self.ksfile,self.add_url)
+                self.line_prepender(self.ksfile,"# Use network installation")
+                self.line_prepender(self.ksfile,self.add_pass)
+                self.line_prepender(self.ksfile,"# Root password")
+                for i in self.add_raid_parts:
+                    self.line_prepender(self.ksfile,i)
+                for i in self.add_raid_partis:
+                    self.line_prepender(self.ksfile,i)
+        except:
+            print("done")
         #add here
     
     def feeddns(self):
@@ -72,7 +93,9 @@ class Configurate:
         self.line_prepender(self.dnsmasqfile,self.add_dhcpo6)
         self.line_prepender(self.dnsmasqfile,self.add_dhcpboot)
         self.line_prepender(self.dnsmasqfile,self.add_dhcpo66)
-    
+        self.line_prepender(self.dnsmasqfile,self.add_dhcp3)
+        self.line_prepender(self.dnsmasqfile,self.add_dhcpo28)
+
     def feedpxe(self):
         # self.line = f"append initrd=centos/initrd.img method=ftp://10.110.12.216/pub devfs=nomount ks=ftp://10.110.12.216/kickstart/ks.cfg"
         with open(self.pxefile) as f:
@@ -96,8 +119,3 @@ class Configurate:
                 self.feeddns()
                 self.feedpxe()
                 self.restart_service()
-
-
-# myip = os.system("ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'")
-# myip = "10.110.12.216"
-
