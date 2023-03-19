@@ -1,3 +1,3 @@
-# please pip all the packages 
-# Run the project with Pyqt5 only 
-# Download the UI_design file to complate the process 
+1. please pip all the packages 
+2. Run the project with Pyqt5 only 
+3. Download the UI_design file to complثte the process 
